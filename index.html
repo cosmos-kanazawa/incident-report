@@ -16,18 +16,17 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--c100);color:var(--c800);font-size:16px;line-height:1.8}
 header{background:var(--g);color:#fff;padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-.ht{font-size:16px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:8px}
+.ht{font-size:15px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:8px}
 nav{display:flex;gap:3px}
 nav button{background:transparent;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s;white-space:nowrap}
 nav button:hover{background:rgba(255,255,255,.15);color:#fff}
 nav button.active{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.6)}
-nav button.hidden{display:none}
+#nav-director{display:none}
 .page{display:none;padding:24px 18px;max-width:900px;margin:0 auto}
 .page.active{display:block}
 .ph{margin-bottom:20px}
 .ph h1{font-size:22px;font-weight:700;color:var(--g);margin-bottom:4px}
 .ph p{font-size:14px;color:var(--c600)}
-/* FORM */
 .fc{background:#fff;border-radius:var(--r);box-shadow:var(--s);overflow:hidden}
 .fs{padding:18px 22px;border-bottom:1px solid var(--c100)}
 .fs:last-child{border-bottom:none}
@@ -41,43 +40,30 @@ input[type=text],input[type=date],input[type=time],textarea{width:100%;padding:9
 input[type=text]:focus,input[type=date]:focus,input[type=time]:focus,textarea:focus{outline:none;border-color:var(--gm);box-shadow:0 0 0 3px rgba(26,107,74,.12)}
 textarea{resize:vertical;min-height:90px}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-/* PILL */
 .pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .pills input[type=radio]{position:absolute;opacity:0;pointer-events:none}
 .pills label{display:inline-flex;align-items:center;padding:7px 15px;border:1px solid var(--c200);border-radius:20px;font-size:14px;color:var(--c700);cursor:pointer;transition:all .12s;user-select:none;line-height:1.4}
 .pills label:hover{border-color:var(--gm);background:var(--gl);color:var(--g)}
 .pills input[type=radio]:checked+label{background:var(--g);border-color:var(--g);color:#fff;font-weight:600}
-/* FOOTER */
 .ff{padding:18px 22px;background:var(--c50);border-top:1px solid var(--c100);display:flex;align-items:center;gap:10px;justify-content:flex-end}
 .bsub{background:var(--g);color:#fff;border:none;padding:12px 30px;border-radius:8px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .15s}
 .bsub:hover{background:var(--gm)}
 .brst{background:transparent;border:1px solid var(--c200);color:var(--c600);padding:11px 18px;border-radius:8px;font-size:14px;font-family:inherit;cursor:pointer}
 .brst:hover{border-color:var(--c400)}
-/* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--g);color:#fff;padding:11px 18px;border-radius:10px;box-shadow:var(--sm);font-size:13px;font-weight:600;display:none;align-items:center;gap:7px;z-index:999;animation:su .25s ease}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--g);color:#fff;padding:11px 18px;border-radius:10px;box-shadow:var(--sm);font-size:13px;font-weight:600;display:none;align-items:center;gap:7px;z-index:999}
 .toast.show{display:flex}
-@keyframes su{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
-
-/* ===== LIST: OFFICE TABS ===== */
-.otabs{display:flex;gap:0;border-bottom:2px solid var(--c200);margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.otab{padding:10px 18px;font-size:14px;font-weight:600;color:var(--c600);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s}
-.otab:hover{color:var(--g);background:var(--gl)}
-.otab.active{color:var(--g);border-bottom-color:var(--g);background:transparent}
-.otab .cnt{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;background:var(--c200);color:var(--c600);border-radius:10px;font-size:12px;padding:0 5px;margin-left:5px}
-.otab.active .cnt{background:var(--g);color:#fff}
-
-/* STATS */
 .sb{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
 .sc{background:#fff;border-radius:var(--r);padding:12px 14px;box-shadow:var(--s);text-align:center}
 .sn{font-size:26px;font-weight:700;color:var(--g);line-height:1.2}
 .slb{font-size:12px;color:var(--c600);margin-top:3px}
-
-/* FILTER */
+.otabs{display:flex;gap:0;border-bottom:2px solid var(--c200);margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.otab{padding:10px 18px;font-size:14px;font-weight:600;color:var(--c600);background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s}
+.otab:hover{color:var(--g);background:var(--gl)}
+.otab.active{color:var(--g);border-bottom-color:var(--g)}
+.otab .cnt{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;background:var(--c200);color:var(--c600);border-radius:10px;font-size:12px;padding:0 5px;margin-left:5px}
+.otab.active .cnt{background:var(--g);color:#fff}
 .fb{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
 .fb select,.fb input{padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff}
-.fb select:focus,.fb input:focus{outline:none;border-color:var(--gm)}
-
-/* CARDS */
 .il{display:flex;flex-direction:column;gap:8px}
 .ic{background:#fff;border-radius:var(--r);box-shadow:var(--s);overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .1s;border-left:4px solid var(--c200)}
 .ic:hover{box-shadow:var(--sm);transform:translateY(-1px)}
@@ -91,13 +77,10 @@ textarea{resize:vertical;min-height:90px}
 .icb{padding:0 15px 11px;font-size:13px;color:var(--c600);display:flex;gap:14px;flex-wrap:wrap}
 .icc{padding:8px 15px;background:var(--al);border-top:1px solid var(--ab);font-size:13px;color:#92400e;display:flex;gap:5px}
 .icc strong{font-weight:700;white-space:nowrap}
-.empty{text-align:center;padding:50px 20px;color:var(--c400)}
-
-/* MODAL */
+.empty{text-align:center;padding:50px 20px;color:var(--c400);font-size:14px}
 .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;align-items:flex-start;justify-content:center;padding:32px 14px;overflow-y:auto}
 .mo.open{display:flex}
-.mw{background:#fff;border-radius:12px;width:100%;max-width:640px;box-shadow:0 8px 40px rgba(0,0,0,.18);animation:fi .2s ease}
-@keyframes fi{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mw{background:#fff;border-radius:12px;width:100%;max-width:640px;box-shadow:0 8px 40px rgba(0,0,0,.18)}
 .mh{padding:16px 22px;border-bottom:1px solid var(--c100);display:flex;justify-content:space-between;align-items:center}
 .mh h2{font-size:17px;font-weight:700}
 .mx{background:none;border:none;font-size:18px;cursor:pointer;color:var(--c400);padding:3px 6px;border-radius:4px}
@@ -111,15 +94,11 @@ textarea{resize:vertical;min-height:90px}
 .mcbox{padding:14px 22px;border-top:1px solid var(--c100);background:var(--al)}
 .mct{font-size:13px;font-weight:700;color:#92400e;margin-bottom:6px}
 .mctxt{font-size:14px;color:#78350f;white-space:pre-wrap;line-height:1.6}
-
-/* DIRECTOR */
 .dir-header{background:linear-gradient(135deg,#1a3a2a,#1a6b4a);color:#fff;border-radius:var(--r);padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
 .dir-header h2{font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px}
 .dir-header p{font-size:13px;opacity:.8;margin-top:3px}
-.blo{font-size:12px;color:#fff;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);padding:6px 14px;border-radius:6px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.blo{font-size:13px;color:#fff;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);padding:7px 16px;border-radius:6px;cursor:pointer;font-family:inherit}
 .blo:hover{background:rgba(255,255,255,.3)}
-
-/* Director office tabs (same style) */
 .dc{background:#fff;border-radius:var(--r);box-shadow:var(--s);overflow:hidden;margin-bottom:10px;border-left:4px solid var(--c200)}
 .dch{padding:11px 15px}
 .dct{font-size:14px;font-weight:700;color:var(--c800);margin-bottom:5px}
@@ -131,10 +110,8 @@ textarea{resize:vertical;min-height:90px}
 .dcae{background:#fff;border-radius:5px;padding:8px 11px;font-size:13px;color:#78350f;border:1px solid var(--ab);margin-bottom:6px;white-space:pre-wrap}
 .dcai{width:100%;padding:8px 11px;border:1px solid var(--ab);border-radius:6px;font-size:14px;font-family:inherit;color:var(--c800);background:#fff;resize:vertical;min-height:56px}
 .dcai:focus{outline:none;border-color:var(--am);box-shadow:0 0 0 2px rgba(217,119,6,.15)}
-.bcmt{margin-top:6px;background:var(--am);color:#fff;border:none;padding:8px 20px;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
+.bcmt{margin-top:6px;background:var(--am);color:#fff;border:none;padding:8px 20px;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
 .bcmt:hover{background:#b45309}
-
-/* SETUP */
 .spc{background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:22px;margin-bottom:14px}
 .spc h3{font-size:16px;font-weight:700;color:var(--g);margin-bottom:10px}
 .spc p{font-size:14px;color:var(--c600);margin-bottom:9px;line-height:1.7}
@@ -144,26 +121,152 @@ textarea{resize:vertical;min-height:90px}
 .ur{display:flex;gap:8px;margin-top:7px}
 .ur input{flex:1;padding:9px 12px;border:1px solid var(--c200);border-radius:7px;font-size:14px;font-family:inherit}
 .ur input:focus{outline:none;border-color:var(--gm);box-shadow:0 0 0 3px rgba(26,107,74,.12)}
-.bsv{background:var(--g);color:#fff;border:none;padding:9px 18px;border-radius:7px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;transition:background .15s}
+.bsv{background:var(--g);color:#fff;border:none;padding:9px 18px;border-radius:7px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap}
 .bsv:hover{background:var(--gm)}
 .st{font-size:13px;margin-top:5px}
 .st.ok{color:#059669}.st.ng{color:var(--red)}
-
-/* URL display box */
 .url-box{background:var(--c50);border:1px solid var(--c200);border-radius:8px;padding:14px 16px;margin-top:10px}
-.url-box p{font-size:12px;color:var(--c600);margin-bottom:6px}
+.url-box p{font-size:13px;color:var(--c600);margin-bottom:6px}
 .url-display{font-family:'Consolas','Monaco',monospace;font-size:13px;color:var(--g);background:#fff;border:1px solid var(--gb);border-radius:6px;padding:8px 12px;word-break:break-all;line-height:1.5;margin-bottom:8px}
-.bcopy{background:var(--g);color:#fff;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
+.bcopy{background:var(--g);color:#fff;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
 .bcopy:hover{background:var(--gm)}
-
 @media(max-width:580px){
   .r2{grid-template-columns:1fr}
   .sb{grid-template-columns:repeat(2,1fr)}
   .dcs{grid-template-columns:1fr}
-  nav button{padding:4px 8px;font-size:11px}
+  nav button{padding:5px 9px;font-size:11px}
   .page{padding:16px 12px}
   .otab{padding:8px 11px;font-size:12px}
 }
+
+/* ===== 印刷スタイル ===== */
+@media print {
+  header, nav, .ph, .sb, .otabs, .fb, .toast, .mo { display:none!important; }
+  body { background:#fff!important; font-size:12pt; }
+  .page { display:none!important; }
+  #print-area {
+    display:block!important;
+    padding:0;
+    margin:0;
+  }
+}
+#print-area { display:none; }
+
+.print-sheet {
+  width:100%;
+  max-width:720px;
+  margin:0 auto;
+  font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;
+  font-size:11pt;
+  line-height:1.7;
+  color:#000;
+}
+.print-title {
+  text-align:center;
+  font-size:16pt;
+  font-weight:700;
+  border-bottom:2.5px solid #1a6b4a;
+  padding-bottom:8px;
+  margin-bottom:16px;
+  color:#1a6b4a;
+}
+.print-subtitle {
+  text-align:right;
+  font-size:9pt;
+  color:#555;
+  margin-top:-12px;
+  margin-bottom:16px;
+}
+.print-section {
+  margin-bottom:14px;
+}
+.print-section-title {
+  font-size:9pt;
+  font-weight:700;
+  color:#fff;
+  background:#1a6b4a;
+  padding:3px 10px;
+  border-radius:3px;
+  margin-bottom:6px;
+  letter-spacing:0.05em;
+}
+.print-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px 16px;
+  border:1px solid #ccc;
+  border-radius:4px;
+  padding:8px 12px;
+  background:#f9fafb;
+}
+.print-grid-full {
+  grid-template-columns:1fr;
+}
+.print-row {
+  display:flex;
+  gap:8px;
+  align-items:baseline;
+  font-size:10.5pt;
+}
+.print-key {
+  font-size:9pt;
+  font-weight:700;
+  color:#555;
+  white-space:nowrap;
+  min-width:80px;
+}
+.print-val {
+  color:#111;
+}
+.print-text-box {
+  border:1px solid #ccc;
+  border-radius:4px;
+  padding:8px 12px;
+  background:#f9fafb;
+  font-size:10.5pt;
+  line-height:1.75;
+  white-space:pre-wrap;
+  min-height:60px;
+}
+.print-comment-box {
+  border:1.5px solid #d97706;
+  border-radius:4px;
+  padding:8px 12px;
+  background:#fef3c7;
+  font-size:10.5pt;
+  line-height:1.75;
+  white-space:pre-wrap;
+}
+.print-comment-title {
+  font-size:9pt;
+  font-weight:700;
+  color:#92400e;
+  margin-bottom:4px;
+}
+.print-footer {
+  margin-top:20px;
+  border-top:1px solid #ccc;
+  padding-top:8px;
+  font-size:8.5pt;
+  color:#888;
+  text-align:right;
+}
+.btn-print {
+  background:#1a6b4a;
+  color:#fff;
+  border:none;
+  padding:9px 20px;
+  border-radius:7px;
+  font-size:13px;
+  font-weight:700;
+  font-family:inherit;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:background .15s;
+}
+.btn-print:hover { background:#2d8f63; }
 </style>
 </head>
 <body>
@@ -172,15 +275,14 @@ textarea{resize:vertical;min-height:90px}
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
     インシデント報告システム｜（株）こすもす
   </div>
-  <nav>
-    <button data-page="report" class="active" onclick="showPage('report')">📝 報告入力</button>
-    <button data-page="list" onclick="showPage('list')">📋 一覧閲覧</button>
-    <button data-page="director" id="nav-director" onclick="showPage('director')" class="hidden">🔐 所長管理</button>
-    <button data-page="setup" onclick="showPage('setup')">⚙️ 設定</button>
+  <nav id="main-nav">
+    <button data-page="report">📝 報告入力</button>
+    <button data-page="list">📋 一覧閲覧</button>
+    <button data-page="director" id="nav-director">🔐 所長管理</button>
+    <button data-page="setup">⚙️ 設定</button>
   </nav>
 </header>
 
-<!-- ==================== REPORT ==================== -->
 <div id="page-report" class="page active">
   <div class="ph"><h1>インシデント報告</h1><p>各項目を入力のうえ「送信」してください。<span style="color:var(--red)">＊</span>は必須項目です。</p></div>
   <div class="fc">
@@ -188,7 +290,7 @@ textarea{resize:vertical;min-height:90px}
       <div class="sl">基本情報</div>
       <div class="fld">
         <label class="fl">所属事業所<span class="req">＊</span></label>
-        <div class="pills" id="f_office">
+        <div class="pills">
           <input type="radio" name="office" id="o1" value="こすもす居宅介護支援事業所金沢"><label for="o1">こすもす居宅介護支援事業所金沢</label>
           <input type="radio" name="office" id="o2" value="こすもす訪問看護ステーション金沢"><label for="o2">こすもす訪問看護ステーション金沢</label>
           <input type="radio" name="office" id="o3" value="看多機こすもすの家"><label for="o3">看多機こすもすの家</label>
@@ -210,7 +312,6 @@ textarea{resize:vertical;min-height:90px}
         </div>
       </div>
     </div>
-
     <div class="fs">
       <div class="sl">発生日時・利用者情報</div>
       <div class="r2">
@@ -234,7 +335,6 @@ textarea{resize:vertical;min-height:90px}
         </div>
       </div>
     </div>
-
     <div class="fs">
       <div class="sl">発生分類<span style="font-size:12px;color:var(--red);margin-left:4px;font-weight:400;text-transform:none;letter-spacing:0">＊</span></div>
       <div class="pills">
@@ -251,7 +351,6 @@ textarea{resize:vertical;min-height:90px}
         <input type="radio" name="inc_type" id="it11" value="その他"><label for="it11">その他</label>
       </div>
     </div>
-
     <div class="fs">
       <div class="sl">原因分類<span style="font-size:12px;color:var(--red);margin-left:4px;font-weight:400;text-transform:none;letter-spacing:0">＊</span></div>
       <div class="pills">
@@ -270,7 +369,6 @@ textarea{resize:vertical;min-height:90px}
         <input type="radio" name="cause_type" id="ct13" value="その他"><label for="ct13">その他</label>
       </div>
     </div>
-
     <div class="fs">
       <div class="sl">報告欄</div>
       <div class="fld">
@@ -282,10 +380,9 @@ textarea{resize:vertical;min-height:90px}
         <textarea id="f_prevention" placeholder="なぜ発生したか（原因分析）と、今後の再発を防ぐための具体的な予防策を記載してください。"></textarea>
       </div>
     </div>
-
     <div class="ff">
-      <button class="brst" onclick="resetForm()">リセット</button>
-      <button class="bsub" onclick="submitReport()">
+      <button class="brst" id="btn-reset">リセット</button>
+      <button class="bsub" id="btn-submit">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         報告を送信
       </button>
@@ -293,43 +390,35 @@ textarea{resize:vertical;min-height:90px}
   </div>
 </div>
 
-<!-- ==================== LIST ==================== -->
 <div id="page-list" class="page">
   <div class="ph"><h1>インシデント一覧</h1><p>事業所タブで絞り込み、さらに発生分類・原因・キーワードで検索できます。</p></div>
-
   <div class="sb">
     <div class="sc"><div class="sn" id="st-total">0</div><div class="slb">総件数</div></div>
     <div class="sc"><div class="sn" id="st-month">0</div><div class="slb">今月</div></div>
     <div class="sc"><div class="sn" id="st-nocomment">0</div><div class="slb">コメント未入力</div></div>
     <div class="sc"><div class="sn" id="st-top" style="font-size:13px;padding-top:4px">—</div><div class="slb">最多発生分類</div></div>
   </div>
-
-  <!-- Office tabs -->
   <div class="otabs" id="office-tabs"></div>
-
-  <!-- Filter bar -->
   <div class="fb">
-    <select id="fl-type" onchange="renderList()">
+    <select id="fl-type">
       <option value="">発生分類：すべて</option>
       <option>内服</option><option>注射</option><option>処置</option>
       <option>急変時の対応</option><option>日常生活の世話</option><option>転倒転落</option>
       <option>器物破損</option><option>接遇</option><option>事務</option><option>勤務</option><option>その他</option>
     </select>
-    <select id="fl-cause" onchange="renderList()">
+    <select id="fl-cause">
       <option value="">原因分類：すべて</option>
       <option>観察不足</option><option>判断遅れ</option><option>技量不足</option>
       <option>連絡不足</option><option>説明不足</option><option>思い込み</option>
       <option>確認不足</option><option>知識不足</option><option>経験不足</option>
       <option>管理ミス</option><option>指示ミス</option><option>危機察知</option><option>その他</option>
     </select>
-    <input type="text" id="fl-kw" placeholder="キーワード検索…" oninput="renderList()" style="width:140px">
-    <button onclick="loadFromGAS()" style="padding:6px 12px;border:1px solid var(--c200);background:#fff;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit">🔄 最新取得</button>
+    <input type="text" id="fl-kw" placeholder="キーワード検索…" style="width:140px">
+    <button id="btn-load-gas" style="padding:7px 12px;border:1px solid var(--c200);background:#fff;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">🔄 最新取得</button>
   </div>
-
   <div class="il" id="incident-list"></div>
 </div>
 
-<!-- ==================== DIRECTOR ==================== -->
 <div id="page-director" class="page">
   <div class="dir-header">
     <div>
@@ -339,59 +428,52 @@ textarea{resize:vertical;min-height:90px}
       </h2>
       <p>各インシデントを確認し、所長コメントを記入できます。</p>
     </div>
-    <button class="blo" onclick="dirLogout()">一般画面に戻る</button>
+    <button class="blo" id="btn-dir-logout">一般画面に戻る</button>
   </div>
-
-  <!-- Director office tabs -->
   <div class="otabs" id="dir-office-tabs"></div>
-
   <div class="fb">
-    <select id="dir-fl-type" onchange="renderDirList()">
+    <select id="dir-fl-type">
       <option value="">発生分類：すべて</option>
       <option>内服</option><option>注射</option><option>処置</option>
       <option>急変時の対応</option><option>日常生活の世話</option><option>転倒転落</option>
       <option>器物破損</option><option>接遇</option><option>事務</option><option>勤務</option><option>その他</option>
     </select>
-    <select id="dir-fl-cause" onchange="renderDirList()">
+    <select id="dir-fl-cause">
       <option value="">原因分類：すべて</option>
       <option>観察不足</option><option>判断遅れ</option><option>技量不足</option>
       <option>連絡不足</option><option>説明不足</option><option>思い込み</option>
       <option>確認不足</option><option>知識不足</option><option>経験不足</option>
       <option>管理ミス</option><option>指示ミス</option><option>危機察知</option><option>その他</option>
     </select>
-    <select id="dir-fl-comment" onchange="renderDirList()">
+    <select id="dir-fl-comment">
       <option value="">コメント：すべて</option>
       <option value="none">未入力のみ</option>
       <option value="done">入力済みのみ</option>
     </select>
   </div>
-
   <div id="dir-list"></div>
 </div>
 
-<!-- ==================== SETUP ==================== -->
 <div id="page-setup" class="page">
-  <div class="ph"><h1>システム設定</h1><p>Googleスプレッドシート連携と所長用URLを管理します。</p></div>
-
+  <div class="ph"><h1>システム設定</h1><p>Googleスプレッドシート連携と所長専用URLを管理します。</p></div>
   <div class="spc">
     <h3>🔐 所長専用URL</h3>
-    <p>以下のURLにアクセスすると、パスワードなしで所長管理画面が開きます。このURLは<strong>所長のみ</strong>に共有してください。</p>
+    <p>以下のURLにアクセスすると所長管理画面が開きます。所長のみに共有してください。</p>
     <div class="url-box">
       <p>現在の所長専用URL：</p>
       <div class="url-display" id="dir-url-display">—</div>
-      <button class="bcopy" onclick="copyDirUrl()">URLをコピー</button>
-      <span style="font-size:12px;color:var(--c600);margin-left:10px" id="copy-done"></span>
+      <button class="bcopy" id="btn-copy-url">URLをコピー</button>
+      <span style="font-size:13px;color:var(--c600);margin-left:10px" id="copy-done"></span>
     </div>
     <div style="margin-top:14px">
-      <p style="margin-bottom:6px">URLのキー（末尾トークン）を変更する場合：</p>
+      <p style="margin-bottom:6px">URLのキーを変更する場合：</p>
       <div class="ur">
         <input type="text" id="dir-key-input" placeholder="新しいキーを入力（例：director2024）">
-        <button class="bsv" onclick="saveDirKey()">変更</button>
+        <button class="bsv" id="btn-save-key">変更</button>
       </div>
       <div class="st" id="key-st"></div>
     </div>
   </div>
-
   <div class="spc">
     <h3>📊 スプレッドシート連携（Google Apps Script）</h3>
     <p>以下の手順でGASを設定すると、送信データが自動でスプレッドシートに蓄積されます。</p>
@@ -453,365 +535,504 @@ function doGet(e){ return doPost(e); }</div>
     <div class="sr"><span class="sn2">4</span>表示されたウェブアプリURLを以下に貼り付けて「保存」</div>
     <div class="ur">
       <input type="text" id="gas-url-input" placeholder="https://script.google.com/macros/s/.../exec">
-      <button class="bsv" onclick="saveGasUrl()">保存</button>
+      <button class="bsv" id="btn-save-gas">保存</button>
     </div>
     <div class="st" id="url-st"></div>
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="mo" id="modal" onclick="if(event.target===this)closeModal()">
+<div class="mo" id="modal">
   <div class="mw">
-    <div class="mh"><h2>インシデント詳細</h2><button class="mx" onclick="closeModal()">✕</button></div>
+    <div class="mh"><h2>インシデント詳細</h2><div style="display:flex;align-items:center;gap:8px"><button class="btn-print" id="btn-print"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>印刷</button><button class="mx" id="btn-close-modal">✕</button></div></div>
     <div class="mb" id="modal-body"></div>
     <div id="modal-comment"></div>
   </div>
 </div>
 
+
+<div id="print-area">
+  <div class="print-sheet" id="print-sheet"></div>
+</div>
+
 <div class="toast" id="toast"><span id="toast-msg"></span></div>
 
 <script>
-// ===== CONST =====
-const OFFICES = [
-  'こすもす居宅介護支援事業所金沢',
-  'こすもす訪問看護ステーション金沢',
-  '看多機こすもすの家',
-  'つつじの家訪問看護ステーション',
-  '看多機つつじの家',
-  '移動支援','福祉用具','総務'
-];
-const OFFICE_SHORT = {
-  'こすもす居宅介護支援事業所金沢':'居宅金沢',
-  'こすもす訪問看護ステーション金沢':'訪看金沢',
-  '看多機こすもすの家':'看多機こすもす',
-  'つつじの家訪問看護ステーション':'つつじ訪看',
-  '看多機つつじの家':'看多機つつじ',
-  '移動支援':'移動支援','福祉用具':'福祉用具','総務':'総務'
-};
-
-// ===== STATE =====
-let incidents = JSON.parse(localStorage.getItem('cosmosu_inc')||'[]');
-let gasUrl = localStorage.getItem('cosmosu_gas')||'';
-let dirKey = localStorage.getItem('cosmosu_dirkey')||'director-cosmosu2024';
-let activeOfficeTab = 'all';
-let activeDirOfficeTab = 'all';
-
-// ===== INIT =====
-document.addEventListener('DOMContentLoaded', () => {
-  const t = new Date().toISOString().split('T')[0];
-  document.getElementById('f_report_date').value = t;
-  document.getElementById('f_incident_date').value = t;
-  const su = localStorage.getItem('cosmosu_gas');
-  if (su) document.getElementById('gas-url-input').value = su;
-
-  // Check URL param for director access
-  const params = new URLSearchParams(window.location.search);
-  const keyParam = params.get('director');
-  if (keyParam && keyParam === dirKey) {
-    document.getElementById('nav-director').classList.remove('hidden');
-    showPage('director');
-  }
-
-  updateDirUrlDisplay();
-  buildOfficeTabs();
-  updateStats();
-  renderList();
-});
-
-// ===== NAVIGATION =====
-function showPage(p) {
-  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-  document.querySelectorAll('nav button[data-page]').forEach(b => {
-    b.classList.toggle('active', b.dataset.page === p);
-  });
-  document.getElementById('page-'+p).classList.add('active');
-  if (p === 'list') { buildOfficeTabs(); updateStats(); renderList(); }
-  if (p === 'director') { buildDirOfficeTabs(); renderDirList(); }
-  if (p === 'setup') updateDirUrlDisplay();
-}
-
-// ===== OFFICE TABS =====
-function buildOfficeTabs() {
-  const el = document.getElementById('office-tabs');
-  const allCount = incidents.length;
-  let html = `<button class="otab${activeOfficeTab==='all'?' active':''}" onclick="setOfficeTab('all')">すべて<span class="cnt">${allCount}</span></button>`;
-  OFFICES.forEach(o => {
-    const cnt = incidents.filter(i => i.office === o).length;
-    if (cnt === 0) return;
-    html += `<button class="otab${activeOfficeTab===o?' active':''}" onclick="setOfficeTab('${o}')">${OFFICE_SHORT[o]||o}<span class="cnt">${cnt}</span></button>`;
-  });
-  el.innerHTML = html;
-}
-
-function setOfficeTab(o) {
-  activeOfficeTab = o;
-  buildOfficeTabs();
-  renderList();
-}
-
-function buildDirOfficeTabs() {
-  const el = document.getElementById('dir-office-tabs');
-  const allCount = incidents.length;
-  let html = `<button class="otab${activeDirOfficeTab==='all'?' active':''}" onclick="setDirOfficeTab('all')">すべて<span class="cnt">${allCount}</span></button>`;
-  OFFICES.forEach(o => {
-    const cnt = incidents.filter(i => i.office === o).length;
-    if (cnt === 0) return;
-    html += `<button class="otab${activeDirOfficeTab===o?' active':''}" onclick="setDirOfficeTab('${o}')">${OFFICE_SHORT[o]||o}<span class="cnt">${cnt}</span></button>`;
-  });
-  el.innerHTML = html;
-}
-
-function setDirOfficeTab(o) {
-  activeDirOfficeTab = o;
-  buildDirOfficeTabs();
-  renderDirList();
-}
-
-// ===== FORM =====
-function gr(n) { const e = document.querySelector(`input[name=${n}]:checked`); return e ? e.value : ''; }
-
-function submitReport() {
-  const office=gr('office'), reporter=document.getElementById('f_reporter').value.trim();
-  const reportDate=document.getElementById('f_report_date').value;
-  const incidentDate=document.getElementById('f_incident_date').value;
-  const incType=gr('inc_type'), causeType=gr('cause_type');
-  const situation=document.getElementById('f_situation').value.trim();
-  const prevention=document.getElementById('f_prevention').value.trim();
-  if (!office) { showToast('⚠️ 所属事業所を選択してください','#d97706'); return; }
-  if (!reporter) { showToast('⚠️ 報告者名を入力してください','#d97706'); return; }
-  if (!reportDate||!incidentDate) { showToast('⚠️ 記入日・発生日を入力してください','#d97706'); return; }
-  if (!incType) { showToast('⚠️ 発生分類を選択してください','#d97706'); return; }
-  if (!causeType) { showToast('⚠️ 原因分類を選択してください','#d97706'); return; }
-  if (!situation) { showToast('⚠️ 発生状況と対応を入力してください','#d97706'); return; }
-  if (!prevention) { showToast('⚠️ 原因と予防策を入力してください','#d97706'); return; }
-  const d = {
-    id: Date.now(), reportDate, reporter, office,
-    incidentDate, incidentTime: document.getElementById('f_incident_time').value,
-    patientName: document.getElementById('f_patient_name').value.trim(),
-    location: document.getElementById('f_location').value.trim(),
-    incType, causeType, situation, prevention, comment: '',
-    timestamp: new Date().toLocaleString('ja-JP',{timeZone:'Asia/Tokyo'})
+(function() {
+  // ===== 定数 =====
+  var OFFICES = [
+    'こすもす居宅介護支援事業所金沢','こすもす訪問看護ステーション金沢',
+    '看多機こすもすの家','つつじの家訪問看護ステーション','看多機つつじの家',
+    '移動支援','福祉用具','総務'
+  ];
+  var OFFICE_SHORT = {
+    'こすもす居宅介護支援事業所金沢':'居宅金沢',
+    'こすもす訪問看護ステーション金沢':'訪看金沢',
+    '看多機こすもすの家':'看多機こすもす',
+    'つつじの家訪問看護ステーション':'つつじ訪看',
+    '看多機つつじの家':'看多機つつじ',
+    '移動支援':'移動支援','福祉用具':'福祉用具','総務':'総務'
   };
-  incidents.unshift(d);
-  localStorage.setItem('cosmosu_inc', JSON.stringify(incidents));
-  if (gasUrl) {
-    fetch(gasUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'submit',...d})}).catch(()=>{});
+
+  // ===== ストレージ（localStorage非対応環境にも対応） =====
+  var store = {};
+  function lsGet(k) {
+    try { return localStorage.getItem(k); } catch(e) { return store[k]||null; }
   }
-  showToast('✅ 報告を送信しました');
-  resetForm();
-}
-
-function resetForm() {
-  const t = new Date().toISOString().split('T')[0];
-  document.querySelectorAll('input[name=office]').forEach(r=>r.checked=false);
-  document.getElementById('f_reporter').value='';
-  document.getElementById('f_report_date').value=t;
-  document.getElementById('f_incident_date').value=t;
-  document.getElementById('f_incident_time').value='';
-  document.getElementById('f_patient_name').value='';
-  document.getElementById('f_location').value='';
-  document.querySelectorAll('input[name=inc_type]').forEach(r=>r.checked=false);
-  document.querySelectorAll('input[name=cause_type]').forEach(r=>r.checked=false);
-  document.getElementById('f_situation').value='';
-  document.getElementById('f_prevention').value='';
-}
-
-// ===== STATS =====
-function updateStats() {
-  const now = new Date(), ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  document.getElementById('st-total').textContent = incidents.length;
-  document.getElementById('st-month').textContent = incidents.filter(i=>i.incidentDate&&i.incidentDate.startsWith(ym)).length;
-  document.getElementById('st-nocomment').textContent = incidents.filter(i=>!i.comment).length;
-  const cnt = {};
-  incidents.forEach(i=>{ if(i.incType) cnt[i.incType]=(cnt[i.incType]||0)+1; });
-  const top = Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('st-top').textContent = top ? top[0] : '—';
-}
-
-// ===== LIST =====
-function renderList() {
-  const tyF = document.getElementById('fl-type').value;
-  const caF = document.getElementById('fl-cause').value;
-  const kw = document.getElementById('fl-kw').value.toLowerCase();
-  const filtered = incidents.filter(i => {
-    if (activeOfficeTab !== 'all' && i.office !== activeOfficeTab) return false;
-    if (tyF && i.incType !== tyF) return false;
-    if (caF && i.causeType !== caF) return false;
-    if (kw) {
-      const txt = `${i.patientName||''} ${i.reporter||''} ${i.location||''} ${i.situation||''} ${i.office||''}`.toLowerCase();
-      if (!txt.includes(kw)) return false;
-    }
-    return true;
-  });
-  const el = document.getElementById('incident-list');
-  if (!filtered.length) {
-    el.innerHTML = `<div class="empty"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 10px;display:block;opacity:.3"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><p>該当するインシデントはありません</p></div>`;
-    return;
+  function lsSet(k,v) {
+    try { localStorage.setItem(k,v); } catch(e) { store[k]=v; }
   }
-  el.innerHTML = filtered.map(i => `
-    <div class="ic" onclick="openModal(${i.id})">
-      <div class="ich"><div class="imeta">
-        ${activeOfficeTab==='all'?`<span class="badge bo">${OFFICE_SHORT[i.office]||i.office||''}</span>`:''}
-        ${i.incType?`<span class="badge bt">${i.incType}</span>`:''}
-        ${i.causeType?`<span class="badge bc">${i.causeType}</span>`:''}
-        <span class="badge bd">📅 ${i.incidentDate||''} ${i.incidentTime||''}</span>
-      </div></div>
-      <div class="icb">
-        ${i.patientName?`<span>👤 ${i.patientName}</span>`:''}
-        ${i.location?`<span>📍 ${i.location}</span>`:''}
-        <span>✏️ ${i.reporter||''}</span>
-        <span style="color:var(--c400)">${i.timestamp||''}</span>
-      </div>
-      ${i.comment?`<div class="icc"><strong>所長コメント：</strong>${i.comment}</div>`:''}
-    </div>`).join('');
-}
 
-// ===== MODAL =====
-function openModal(id) {
-  const i = incidents.find(x=>x.id===id); if (!i) return;
-  const rows = [
-    ['所属事業所',i.office],['報告者',i.reporter],['記入日',i.reportDate],
-    ['発生日時',`${i.incidentDate||''}${i.incidentTime?' '+i.incidentTime:''}`],
-    ['利用者様',i.patientName],['発生場所',i.location],
-    ['発生分類',i.incType],['原因分類',i.causeType],
-  ].filter(r=>r[1]).map(r=>`<div class="dr"><div class="dk">${r[0]}</div><div class="dv">${r[1]}</div></div>`).join('');
-  document.getElementById('modal-body').innerHTML = `
-    ${rows}
-    <div class="dsl">発生状況と対応（家族への連絡含む）</div>
-    <div class="dtxt">${i.situation||'—'}</div>
-    <div class="dsl">原因と予防策</div>
-    <div class="dtxt">${i.prevention||'—'}</div>`;
-  document.getElementById('modal-comment').innerHTML = i.comment ? `
-    <div class="mcbox"><div class="mct">🏷️ 所長コメント</div><div class="mctxt">${i.comment}</div></div>` : '';
-  document.getElementById('modal').classList.add('open');
-}
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  // ===== 状態 =====
+  var incidents = [];
+  try { incidents = JSON.parse(lsGet('cosmosu_inc')||'[]'); } catch(e) { incidents=[]; }
+  var gasUrl = lsGet('cosmosu_gas')||'';
+  var dirKey = lsGet('cosmosu_dirkey')||'director-cosmosu2024';
+  var activeOfficeTab = 'all';
+  var activeDirOfficeTab = 'all';
 
-// ===== DIRECTOR =====
-function dirLogout() {
-  // Remove director param from URL and go back to list
-  const url = new URL(window.location.href);
-  url.searchParams.delete('director');
-  window.history.replaceState({}, '', url.toString());
-  document.getElementById('nav-director').classList.add('hidden');
-  showPage('list');
-}
-
-function renderDirList() {
-  const tyF = document.getElementById('dir-fl-type').value;
-  const caF = document.getElementById('dir-fl-cause').value;
-  const cmtF = document.getElementById('dir-fl-comment').value;
-  const filtered = incidents.filter(i => {
-    if (activeDirOfficeTab !== 'all' && i.office !== activeDirOfficeTab) return false;
-    if (tyF && i.incType !== tyF) return false;
-    if (caF && i.causeType !== caF) return false;
-    if (cmtF === 'none' && i.comment) return false;
-    if (cmtF === 'done' && !i.comment) return false;
-    return true;
-  });
-  const el = document.getElementById('dir-list');
-  if (!filtered.length) {
-    el.innerHTML = '<div class="empty"><p>該当するインシデントはありません</p></div>'; return;
+  // ===== ページ切り替え =====
+  function showPage(p) {
+    ['report','list','director','setup'].forEach(function(name) {
+      var el = document.getElementById('page-'+name);
+      if (el) el.classList.remove('active');
+    });
+    var target = document.getElementById('page-'+p);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('#main-nav button[data-page]').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-page') === p);
+    });
+    if (p === 'list')     { buildOfficeTabs(); updateStats(); renderList(); }
+    if (p === 'director') { buildDirOfficeTabs(); renderDirList(); }
+    if (p === 'setup')    { updateDirUrlDisplay(); }
   }
-  el.innerHTML = filtered.map(i => `
-    <div class="dc">
-      <div class="dch">
-        <div class="dct">${i.incidentDate||''} ${i.incidentTime||''} ／ ${i.patientName?i.patientName+' ／ ':''}${i.location||''}</div>
-        <div class="dcm">
-          ${activeDirOfficeTab==='all'?`<span class="badge bo">${OFFICE_SHORT[i.office]||i.office||''}</span>`:''}
-          ${i.incType?`<span class="badge bt">${i.incType}</span>`:''}
-          ${i.causeType?`<span class="badge bc">${i.causeType}</span>`:''}
-        </div>
-      </div>
-      <div class="dcs">
-        <span>報告者：${i.reporter||'-'}</span>
-        <span>記入日：${i.reportDate||'-'}</span>
-      </div>
-      <div class="dctxt">${i.situation||''}</div>
-      <div class="dca">
-        <div class="dcal">🖊️ 所長コメント</div>
-        ${i.comment?`<div class="dcae">${i.comment}</div>`:''}
-        <textarea class="dcai" id="cmt-${i.id}" placeholder="コメントを入力…">${i.comment||''}</textarea>
-        <button class="bcmt" onclick="saveComment(${i.id})">保存</button>
-      </div>
-    </div>`).join('');
-}
 
-function saveComment(id) {
-  const cmt = (document.getElementById(`cmt-${id}`)?.value||'').trim();
-  const idx = incidents.findIndex(i=>i.id===id);
-  if (idx===-1) return;
-  incidents[idx].comment = cmt;
-  localStorage.setItem('cosmosu_inc', JSON.stringify(incidents));
-  if (gasUrl) {
-    fetch(gasUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'comment',id,comment:cmt})}).catch(()=>{});
-  }
-  showToast('💬 コメントを保存しました');
-  renderDirList();
-  buildDirOfficeTabs();
-}
+  // ===== 初期化 =====
+  function init() {
+    var t = new Date().toISOString().split('T')[0];
+    document.getElementById('f_report_date').value = t;
+    document.getElementById('f_incident_date').value = t;
+    var su = lsGet('cosmosu_gas');
+    if (su) document.getElementById('gas-url-input').value = su;
 
-// ===== GAS =====
-function loadFromGAS() {
-  if (!gasUrl) { showToast('⚠️ 設定画面でGASのURLを登録してください','#d97706'); return; }
-  fetch(gasUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'fetch'})})
-    .then(r=>r.json()).then(res=>{
-      if (res.ok&&res.data) {
-        incidents = res.data.reverse().map(d=>({...d,id:Number(d.id)||Date.now()}));
-        localStorage.setItem('cosmosu_inc', JSON.stringify(incidents));
-        buildOfficeTabs(); updateStats(); renderList();
-        showToast(`✅ ${incidents.length}件取得しました`);
+    // ナビボタン
+    document.querySelectorAll('#main-nav button[data-page]').forEach(function(b) {
+      b.addEventListener('click', function() {
+        showPage(b.getAttribute('data-page'));
+      });
+    });
+
+    // フォームボタン
+    document.getElementById('btn-submit').addEventListener('click', submitReport);
+    document.getElementById('btn-reset').addEventListener('click', resetForm);
+    document.getElementById('btn-load-gas').addEventListener('click', loadFromGAS);
+    document.getElementById('btn-dir-logout').addEventListener('click', dirLogout);
+    document.getElementById('btn-copy-url').addEventListener('click', copyDirUrl);
+    document.getElementById('btn-save-key').addEventListener('click', saveDirKey);
+    document.getElementById('btn-save-gas').addEventListener('click', saveGasUrl);
+    document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+    document.getElementById('btn-print').addEventListener('click', printIncident);
+
+    // モーダル背景
+    document.getElementById('modal').addEventListener('click', function(e) {
+      if (e.target === document.getElementById('modal')) closeModal();
+    });
+
+    // インシデントカード（委譲）
+    document.getElementById('incident-list').addEventListener('click', function(e) {
+      var card = e.target.closest('[data-id]');
+      if (card) openModal(Number(card.getAttribute('data-id')));
+    });
+
+    // 所長コメント保存（委譲）
+    document.getElementById('dir-list').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-cmt]');
+      if (btn) saveComment(Number(btn.getAttribute('data-cmt')));
+    });
+
+    // 事業所タブ（委譲）
+    document.getElementById('office-tabs').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-office]');
+      if (btn) { activeOfficeTab = btn.getAttribute('data-office'); buildOfficeTabs(); renderList(); }
+    });
+    document.getElementById('dir-office-tabs').addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-diroffice]');
+      if (btn) { activeDirOfficeTab = btn.getAttribute('data-diroffice'); buildDirOfficeTabs(); renderDirList(); }
+    });
+
+    // フィルター
+    document.getElementById('fl-type').addEventListener('change', renderList);
+    document.getElementById('fl-cause').addEventListener('change', renderList);
+    document.getElementById('fl-kw').addEventListener('input', renderList);
+    document.getElementById('dir-fl-type').addEventListener('change', renderDirList);
+    document.getElementById('dir-fl-cause').addEventListener('change', renderDirList);
+    document.getElementById('dir-fl-comment').addEventListener('change', renderDirList);
+
+    // URL パラメータで所長アクセス確認
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var keyParam = params.get('director');
+      if (keyParam && keyParam === dirKey) {
+        document.getElementById('nav-director').style.display = '';
+        showPage('director');
+        return;
       }
-    }).catch(()=>showToast('⚠️ 取得に失敗しました。GAS URLを確認してください','#d97706'));
-}
+    } catch(e) {}
 
-// ===== SETUP =====
-function updateDirUrlDisplay() {
-  const base = window.location.origin + window.location.pathname;
-  const url = `${base}?director=${dirKey}`;
-  document.getElementById('dir-url-display').textContent = url;
-  const inp = document.getElementById('dir-key-input');
-  if (inp) inp.placeholder = `現在のキー：${dirKey}`;
-}
-
-function copyDirUrl() {
-  const url = document.getElementById('dir-url-display').textContent;
-  navigator.clipboard.writeText(url).then(()=>{
-    const el = document.getElementById('copy-done');
-    el.textContent = '✅ コピーしました';
-    setTimeout(()=>el.textContent='', 2500);
-  });
-}
-
-function saveDirKey() {
-  const key = document.getElementById('dir-key-input').value.trim();
-  if (!key || key.length < 4) {
-    document.getElementById('key-st').textContent = '4文字以上で入力してください';
-    document.getElementById('key-st').className = 'st ng'; return;
+    // 初期表示
+    showPage('report');
+    buildOfficeTabs();
+    updateStats();
+    renderList();
   }
-  dirKey = key;
-  localStorage.setItem('cosmosu_dirkey', key);
-  updateDirUrlDisplay();
-  document.getElementById('key-st').textContent = '✅ 変更しました。新しいURLを所長に共有してください。';
-  document.getElementById('key-st').className = 'st ok';
-  document.getElementById('dir-key-input').value = '';
-}
 
-function saveGasUrl() {
-  const url = document.getElementById('gas-url-input').value.trim();
-  if (!url) { document.getElementById('url-st').textContent='URLを入力してください'; document.getElementById('url-st').className='st ng'; return; }
-  gasUrl = url;
-  localStorage.setItem('cosmosu_gas', url);
-  document.getElementById('url-st').textContent = '✅ 保存しました';
-  document.getElementById('url-st').className = 'st ok';
-}
+  // ===== フォーム =====
+  function gr(n) {
+    var el = document.querySelector('input[name="'+n+'"]:checked');
+    return el ? el.value : '';
+  }
 
-// ===== TOAST =====
-function showToast(msg, bg) {
-  const t=document.getElementById('toast'), m=document.getElementById('toast-msg');
-  m.textContent=msg; t.style.background=bg||'var(--g)';
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 3200);
-}
-<\/script>
+  function submitReport() {
+    var office = gr('office');
+    var reporter = document.getElementById('f_reporter').value.trim();
+    var reportDate = document.getElementById('f_report_date').value;
+    var incidentDate = document.getElementById('f_incident_date').value;
+    var incType = gr('inc_type');
+    var causeType = gr('cause_type');
+    var situation = document.getElementById('f_situation').value.trim();
+    var prevention = document.getElementById('f_prevention').value.trim();
+    if (!office)       { showToast('⚠️ 所属事業所を選択してください','#d97706'); return; }
+    if (!reporter)     { showToast('⚠️ 報告者名を入力してください','#d97706'); return; }
+    if (!reportDate||!incidentDate) { showToast('⚠️ 記入日・発生日を入力してください','#d97706'); return; }
+    if (!incType)      { showToast('⚠️ 発生分類を選択してください','#d97706'); return; }
+    if (!causeType)    { showToast('⚠️ 原因分類を選択してください','#d97706'); return; }
+    if (!situation)    { showToast('⚠️ 発生状況と対応を入力してください','#d97706'); return; }
+    if (!prevention)   { showToast('⚠️ 原因と予防策を入力してください','#d97706'); return; }
+    var d = {
+      id: Date.now(), reportDate: reportDate, reporter: reporter, office: office,
+      incidentDate: incidentDate,
+      incidentTime: document.getElementById('f_incident_time').value,
+      patientName: document.getElementById('f_patient_name').value.trim(),
+      location: document.getElementById('f_location').value.trim(),
+      incType: incType, causeType: causeType,
+      situation: situation, prevention: prevention, comment: '',
+      timestamp: new Date().toLocaleString('ja-JP')
+    };
+    incidents.unshift(d);
+    lsSet('cosmosu_inc', JSON.stringify(incidents));
+    if (gasUrl) {
+      fetch(gasUrl, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:'submit'},d))}).catch(function(){});
+    }
+    showToast('✅ 報告を送信しました');
+    resetForm();
+  }
+
+  function resetForm() {
+    var t = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[name=office]').forEach(function(r){r.checked=false;});
+    document.getElementById('f_reporter').value='';
+    document.getElementById('f_report_date').value=t;
+    document.getElementById('f_incident_date').value=t;
+    document.getElementById('f_incident_time').value='';
+    document.getElementById('f_patient_name').value='';
+    document.getElementById('f_location').value='';
+    document.querySelectorAll('input[name=inc_type]').forEach(function(r){r.checked=false;});
+    document.querySelectorAll('input[name=cause_type]').forEach(function(r){r.checked=false;});
+    document.getElementById('f_situation').value='';
+    document.getElementById('f_prevention').value='';
+  }
+
+  // ===== 統計 =====
+  function updateStats() {
+    var now = new Date();
+    var ym = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+    document.getElementById('st-total').textContent = incidents.length;
+    document.getElementById('st-month').textContent = incidents.filter(function(i){return i.incidentDate&&i.incidentDate.startsWith(ym);}).length;
+    document.getElementById('st-nocomment').textContent = incidents.filter(function(i){return !i.comment;}).length;
+    var cnt = {};
+    incidents.forEach(function(i){if(i.incType) cnt[i.incType]=(cnt[i.incType]||0)+1;});
+    var top = Object.entries(cnt).sort(function(a,b){return b[1]-a[1];})[0];
+    var el = document.getElementById('st-top');
+    el.textContent = top ? top[0] : '—';
+  }
+
+  // ===== 事業所タブ =====
+  function buildOfficeTabs() {
+    var el = document.getElementById('office-tabs');
+    var html = '<button class="otab'+(activeOfficeTab==='all'?' active':'')+'" data-office="all">すべて<span class="cnt">'+incidents.length+'</span></button>';
+    OFFICES.forEach(function(o) {
+      var cnt = incidents.filter(function(i){return i.office===o;}).length;
+      if (cnt === 0) return;
+      html += '<button class="otab'+(activeOfficeTab===o?' active':'')+'" data-office="'+o+'">'+(OFFICE_SHORT[o]||o)+'<span class="cnt">'+cnt+'</span></button>';
+    });
+    el.innerHTML = html;
+  }
+
+  function buildDirOfficeTabs() {
+    var el = document.getElementById('dir-office-tabs');
+    var html = '<button class="otab'+(activeDirOfficeTab==='all'?' active':'')+'" data-diroffice="all">すべて<span class="cnt">'+incidents.length+'</span></button>';
+    OFFICES.forEach(function(o) {
+      var cnt = incidents.filter(function(i){return i.office===o;}).length;
+      if (cnt === 0) return;
+      html += '<button class="otab'+(activeDirOfficeTab===o?' active':'')+'" data-diroffice="'+o+'">'+(OFFICE_SHORT[o]||o)+'<span class="cnt">'+cnt+'</span></button>';
+    });
+    el.innerHTML = html;
+  }
+
+  // ===== 一覧 =====
+  function renderList() {
+    var tyF = document.getElementById('fl-type').value;
+    var caF = document.getElementById('fl-cause').value;
+    var kw  = document.getElementById('fl-kw').value.toLowerCase();
+    var filtered = incidents.filter(function(i) {
+      if (activeOfficeTab !== 'all' && i.office !== activeOfficeTab) return false;
+      if (tyF && i.incType !== tyF) return false;
+      if (caF && i.causeType !== caF) return false;
+      if (kw) {
+        var txt = ((i.patientName||'')+' '+(i.reporter||'')+' '+(i.location||'')+' '+(i.situation||'')+' '+(i.office||'')).toLowerCase();
+        if (txt.indexOf(kw) === -1) return false;
+      }
+      return true;
+    });
+    var el = document.getElementById('incident-list');
+    if (!filtered.length) {
+      el.innerHTML = '<div class="empty"><p>該当するインシデントはありません</p></div>';
+      return;
+    }
+    el.innerHTML = filtered.map(function(i) {
+      return '<div class="ic" data-id="'+i.id+'">'
+        +'<div class="ich"><div class="imeta">'
+        +(activeOfficeTab==='all'?'<span class="badge bo">'+(OFFICE_SHORT[i.office]||i.office||'')+'</span>':'')
+        +(i.incType?'<span class="badge bt">'+i.incType+'</span>':'')
+        +(i.causeType?'<span class="badge bc">'+i.causeType+'</span>':'')
+        +'<span class="badge bd">📅 '+(i.incidentDate||'')+' '+(i.incidentTime||'')+'</span>'
+        +'</div></div>'
+        +'<div class="icb">'
+        +(i.patientName?'<span>👤 '+i.patientName+'</span>':'')
+        +(i.location?'<span>📍 '+i.location+'</span>':'')
+        +'<span>✏️ '+(i.reporter||'')+'</span>'
+        +'<span style="color:var(--c400)">'+(i.timestamp||'')+'</span>'
+        +'</div>'
+        +(i.comment?'<div class="icc"><strong>所長コメント：</strong>'+i.comment+'</div>':'')
+        +'</div>';
+    }).join('');
+  }
+
+  // ===== モーダル =====
+  var currentIncident = null;
+
+  function openModal(id) {
+    var i = null;
+    incidents.forEach(function(x){if(x.id===id) i=x;});
+    if (!i) return;
+    currentIncident = i;
+    var rows = [
+      ['所属事業所',i.office],['報告者',i.reporter],['記入日',i.reportDate],
+      ['発生日時',(i.incidentDate||'')+(i.incidentTime?' '+i.incidentTime:'')],
+      ['利用者様',i.patientName],['発生場所',i.location],
+      ['発生分類',i.incType],['原因分類',i.causeType]
+    ].filter(function(r){return r[1];})
+     .map(function(r){return '<div class="dr"><div class="dk">'+r[0]+'</div><div class="dv">'+r[1]+'</div></div>';})
+     .join('');
+    document.getElementById('modal-body').innerHTML = rows
+      +'<div class="dsl">発生状況と対応（家族への連絡含む）</div>'
+      +'<div class="dtxt">'+(i.situation||'—')+'</div>'
+      +'<div class="dsl">原因と予防策</div>'
+      +'<div class="dtxt">'+(i.prevention||'—')+'</div>';
+    document.getElementById('modal-comment').innerHTML = i.comment
+      ?'<div class="mcbox"><div class="mct">🏷️ 所長コメント</div><div class="mctxt">'+i.comment+'</div></div>':'';
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    currentIncident = null;
+  }
+
+  function printIncident() {
+    var i = currentIncident;
+    if (!i) return;
+    var now = new Date().toLocaleString('ja-JP');
+    var sheet = document.getElementById('print-sheet');
+    sheet.innerHTML =
+      '<div class="print-title">インシデント報告書</div>'
+      +'<div class="print-subtitle">印刷日時：'+now+'　（株）こすもす</div>'
+
+      +'<div class="print-section">'
+      +'<div class="print-section-title">基本情報</div>'
+      +'<div class="print-grid">'
+      +'<div class="print-row"><span class="print-key">所属事業所</span><span class="print-val">'+(i.office||'—')+'</span></div>'
+      +'<div class="print-row"><span class="print-key">報告者名</span><span class="print-val">'+(i.reporter||'—')+'</span></div>'
+      +'<div class="print-row"><span class="print-key">記入日</span><span class="print-val">'+(i.reportDate||'—')+'</span></div>'
+      +'<div class="print-row"><span class="print-key">登録日時</span><span class="print-val">'+(i.timestamp||'—')+'</span></div>'
+      +'</div></div>'
+
+      +'<div class="print-section">'
+      +'<div class="print-section-title">発生状況</div>'
+      +'<div class="print-grid">'
+      +'<div class="print-row"><span class="print-key">発生日時</span><span class="print-val">'+(i.incidentDate||'—')+' '+(i.incidentTime||'')+'</span></div>'
+      +'<div class="print-row"><span class="print-key">発生場所</span><span class="print-val">'+(i.location||'—')+'</span></div>'
+      +'<div class="print-row"><span class="print-key">利用者様</span><span class="print-val">'+(i.patientName||'—')+'</span></div>'
+      +'<div class="print-row"><span class="print-key">発生分類</span><span class="print-val">'+(i.incType||'—')+'</span></div>'
+      +'<div class="print-row" style="grid-column:1/-1"><span class="print-key">原因分類</span><span class="print-val">'+(i.causeType||'—')+'</span></div>'
+      +'</div></div>'
+
+      +'<div class="print-section">'
+      +'<div class="print-section-title">発生状況と対応（家族への連絡含む）</div>'
+      +'<div class="print-text-box">'+(i.situation||'—')+'</div>'
+      +'</div>'
+
+      +'<div class="print-section">'
+      +'<div class="print-section-title">原因と予防策</div>'
+      +'<div class="print-text-box">'+(i.prevention||'—')+'</div>'
+      +'</div>'
+
+      +(i.comment
+        ?'<div class="print-section">'
+         +'<div class="print-comment-title">🏷️ 所長コメント</div>'
+         +'<div class="print-comment-box">'+i.comment+'</div>'
+         +'</div>'
+        :'<div class="print-section">'
+         +'<div class="print-comment-title">🏷️ 所長コメント</div>'
+         +'<div class="print-comment-box" style="min-height:50px;color:#aaa">（未記入）</div>'
+         +'</div>')
+
+      +'<div class="print-footer">（株）こすもす　インシデント報告システム　ID:'+i.id+'</div>';
+
+    document.getElementById('print-area').style.display = 'block';
+    closeModal();
+    window.print();
+    document.getElementById('print-area').style.display = 'none';
+  }
+
+  // ===== 所長 =====
+  function dirLogout() {
+    try {
+      var url = new URL(window.location.href);
+      url.searchParams.delete('director');
+      window.history.replaceState({}, '', url.toString());
+    } catch(e) {}
+    document.getElementById('nav-director').style.display = 'none';
+    showPage('list');
+  }
+
+  function renderDirList() {
+    var tyF  = document.getElementById('dir-fl-type').value;
+    var caF  = document.getElementById('dir-fl-cause').value;
+    var cmtF = document.getElementById('dir-fl-comment').value;
+    var filtered = incidents.filter(function(i) {
+      if (activeDirOfficeTab !== 'all' && i.office !== activeDirOfficeTab) return false;
+      if (tyF && i.incType !== tyF) return false;
+      if (caF && i.causeType !== caF) return false;
+      if (cmtF === 'none' && i.comment) return false;
+      if (cmtF === 'done' && !i.comment) return false;
+      return true;
+    });
+    var el = document.getElementById('dir-list');
+    if (!filtered.length) { el.innerHTML='<div class="empty"><p>該当するインシデントはありません</p></div>'; return; }
+    el.innerHTML = filtered.map(function(i) {
+      return '<div class="dc">'
+        +'<div class="dch"><div class="dct">'+(i.incidentDate||'')+' '+(i.incidentTime||'')+' ／ '+(i.patientName?i.patientName+' ／ ':'')+( i.location||'')+'</div>'
+        +'<div class="dcm">'
+        +(activeDirOfficeTab==='all'?'<span class="badge bo">'+(OFFICE_SHORT[i.office]||i.office||'')+'</span>':'')
+        +(i.incType?'<span class="badge bt">'+i.incType+'</span>':'')
+        +(i.causeType?'<span class="badge bc">'+i.causeType+'</span>':'')
+        +'</div></div>'
+        +'<div class="dcs"><span>報告者：'+(i.reporter||'-')+'</span><span>記入日：'+(i.reportDate||'-')+'</span></div>'
+        +'<div class="dctxt">'+(i.situation||'')+'</div>'
+        +'<div class="dca"><div class="dcal">🖊️ 所長コメント</div>'
+        +(i.comment?'<div class="dcae">'+i.comment+'</div>':'')
+        +'<textarea class="dcai" id="cmt-'+i.id+'" placeholder="コメントを入力…">'+(i.comment||'')+'</textarea>'
+        +'<button class="bcmt" data-cmt="'+i.id+'">保存</button>'
+        +'</div></div>';
+    }).join('');
+  }
+
+  function saveComment(id) {
+    var el = document.getElementById('cmt-'+id);
+    var cmt = el ? el.value.trim() : '';
+    var idx = -1;
+    incidents.forEach(function(i,n){if(i.id===id) idx=n;});
+    if (idx === -1) return;
+    incidents[idx].comment = cmt;
+    lsSet('cosmosu_inc', JSON.stringify(incidents));
+    if (gasUrl) {
+      fetch(gasUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'comment',id:id,comment:cmt})}).catch(function(){});
+    }
+    showToast('💬 コメントを保存しました');
+    renderDirList();
+    buildDirOfficeTabs();
+  }
+
+  // ===== GAS =====
+  function loadFromGAS() {
+    if (!gasUrl) { showToast('⚠️ 設定画面でGASのURLを登録してください','#d97706'); return; }
+    fetch(gasUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'fetch'})})
+      .then(function(r){return r.json();})
+      .then(function(res){
+        if (res.ok && res.data) {
+          incidents = res.data.reverse().map(function(d){return Object.assign(d,{id:Number(d.id)||Date.now()});});
+          lsSet('cosmosu_inc', JSON.stringify(incidents));
+          buildOfficeTabs(); updateStats(); renderList();
+          showToast('✅ '+incidents.length+'件取得しました');
+        }
+      }).catch(function(){ showToast('⚠️ 取得に失敗しました','#d97706'); });
+  }
+
+  // ===== 設定 =====
+  function updateDirUrlDisplay() {
+    var base = window.location.origin + window.location.pathname;
+    var url = base+'?director='+dirKey;
+    document.getElementById('dir-url-display').textContent = url;
+  }
+
+  function copyDirUrl() {
+    var url = document.getElementById('dir-url-display').textContent;
+    navigator.clipboard.writeText(url).then(function(){
+      var el = document.getElementById('copy-done');
+      el.textContent = '✅ コピーしました';
+      setTimeout(function(){el.textContent='';}, 2500);
+    }).catch(function(){
+      showToast('コピーできませんでした','#d97706');
+    });
+  }
+
+  function saveDirKey() {
+    var key = document.getElementById('dir-key-input').value.trim();
+    var st = document.getElementById('key-st');
+    if (!key || key.length < 4) { st.textContent='4文字以上で入力してください'; st.className='st ng'; return; }
+    dirKey = key;
+    lsSet('cosmosu_dirkey', key);
+    updateDirUrlDisplay();
+    st.textContent='✅ 変更しました。新しいURLを所長に共有してください。';
+    st.className='st ok';
+    document.getElementById('dir-key-input').value='';
+  }
+
+  function saveGasUrl() {
+    var url = document.getElementById('gas-url-input').value.trim();
+    var st = document.getElementById('url-st');
+    if (!url) { st.textContent='URLを入力してください'; st.className='st ng'; return; }
+    gasUrl = url;
+    lsSet('cosmosu_gas', url);
+    st.textContent='✅ 保存しました'; st.className='st ok';
+  }
+
+  // ===== トースト =====
+  function showToast(msg, bg) {
+    var t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.style.background = bg || 'var(--g)';
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3200);
+  }
+
+  // ===== 起動 =====
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
 </body>
 </html>
