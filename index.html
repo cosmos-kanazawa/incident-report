@@ -691,7 +691,7 @@ function doGet(e){ return doPost(e); }</div>
   // ===== 状態 =====
   var incidents = [];
   try { incidents = JSON.parse(lsGet('cosmosu_inc')||'[]'); } catch(e) { incidents=[]; }
-  var gasUrl = lsGet('cosmosu_gas')||'';
+  var gasUrl = lsGet('cosmosu_gas')||'https://script.google.com/macros/s/AKfycbzIz412SFU9sSJnpe-A6pLAkT5xokEM-dfB9CsMjKrTSUW6oSuYyAp68AXa3Lbvt8s/exec';
   var dirKey = lsGet('cosmosu_dirkey')||'director-cosmosu2024';
   var activeOfficeTab = 'all';
   var activeDirOfficeTab = 'all';
@@ -795,6 +795,21 @@ function doGet(e){ return doPost(e); }</div>
     buildOfficeTabs();
     updateStats();
     renderList();
+
+    // GAS URLが設定されていれば自動で最新データ取得
+    if (gasUrl) {
+      fetch(gasUrl, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'fetch'})})
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+          if (res.ok && res.data && res.data.length > 0) {
+            incidents = res.data.reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
+            lsSet('cosmosu_inc', JSON.stringify(incidents));
+            buildOfficeTabs();
+            updateStats();
+            renderList();
+          }
+        }).catch(function(){});
+    }
   }
 
   // ===== フォーム =====
@@ -1144,35 +1159,95 @@ function doGet(e){ return doPost(e); }</div>
     var months = getMonthOptions();
     if (!months.length) { showToast('⚠️ 印刷できるデータがありません','#d97706'); return; }
 
-    // 月選択ダイアログ
+    // 事業所リスト（データがある事業所のみ）
+    var officesWithData = OFFICES.filter(function(o){
+      return incidents.some(function(i){ return i.office === o; });
+    });
+
+    // ダイアログ
     var sel = document.createElement('div');
-    sel.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:flex;align-items:center;justify-content:center;';
+    sel.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;';
     var box = document.createElement('div');
-    box.style.cssText = 'background:#fff;border-radius:12px;padding:28px;min-width:300px;box-shadow:0 8px 40px rgba(0,0,0,.2);';
-    box.innerHTML = '<div style="font-size:16px;font-weight:700;color:#1a6b4a;margin-bottom:16px">📅 印刷する月を選択</div>'
-      + '<select id="month-sel" class="mp-month-select" style="width:100%;margin-bottom:16px">'
+    box.style.cssText = 'background:#fff;border-radius:12px;padding:28px;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,.2);';
+    box.innerHTML =
+      '<div style="font-size:16px;font-weight:700;color:#1a6b4a;margin-bottom:18px">🖨️ 月次一覧を印刷</div>'
+
+      // 月選択
+      + '<div style="font-size:12px;font-weight:700;color:#4b5563;margin-bottom:5px">印刷する月</div>'
+      + '<select id="month-sel" class="mp-month-select" style="width:100%;margin-bottom:18px">'
       + months.map(function(m){ return '<option value="'+m+'">'+m.replace('-','年')+'月</option>'; }).join('')
       + '</select>'
+
+      // 印刷範囲
+      + '<div style="font-size:12px;font-weight:700;color:#4b5563;margin-bottom:8px">印刷範囲</div>'
+      + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">'
+
+      // 全事業所
+      + '<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid #b7dfc9;border-radius:8px;cursor:pointer;background:#e8f5ee">'
+      + '<input type="radio" name="print-scope" value="all" checked style="accent-color:#1a6b4a;width:16px;height:16px">'
+      + '<div><div style="font-size:13px;font-weight:700;color:#1a6b4a">全事業所まとめて印刷</div>'
+      + '<div style="font-size:11px;color:#4b5563">事業所ごとにセクション分けして出力</div></div>'
+      + '</label>'
+
+      // 事業所を選ぶ
+      + '<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:8px;cursor:pointer">'
+      + '<input type="radio" name="print-scope" value="single" style="accent-color:#1a6b4a;width:16px;height:16px">'
+      + '<div><div style="font-size:13px;font-weight:700;color:#374151">事業所を選んで印刷</div>'
+      + '<div style="font-size:11px;color:#4b5563">1事業所分のみ出力</div></div>'
+      + '</label>'
+      + '</div>'
+
+      // 事業所選択プルダウン（単体選択時のみ表示）
+      + '<div id="office-sel-wrap" style="display:none;margin-bottom:18px">'
+      + '<div style="font-size:12px;font-weight:700;color:#4b5563;margin-bottom:5px">事業所を選択</div>'
+      + '<select id="office-sel" class="mp-month-select" style="width:100%">'
+      + officesWithData.map(function(o){ return '<option value="'+o+'">'+(OFFICE_SHORT[o]||o)+'</option>'; }).join('')
+      + '</select></div>'
+
+      // ボタン
       + '<div style="display:flex;gap:8px;justify-content:flex-end">'
       + '<button id="mp-cancel" style="padding:9px 18px;border:1px solid #e5e7eb;background:#fff;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">キャンセル</button>'
-      + '<button id="mp-go" style="padding:9px 20px;background:#1a6b4a;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">この月を印刷</button>'
+      + '<button id="mp-go" style="padding:9px 20px;background:#1a6b4a;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">印刷する</button>'
       + '</div>';
+
     sel.appendChild(box);
     document.body.appendChild(sel);
+
+    // ラジオ切り替えで事業所選択を表示/非表示
+    box.querySelectorAll('input[name=print-scope]').forEach(function(r){
+      r.addEventListener('change', function(){
+        document.getElementById('office-sel-wrap').style.display = r.value === 'single' ? 'block' : 'none';
+        // ボーダー色切り替え
+        box.querySelectorAll('label').forEach(function(l){ l.style.borderColor='#e5e7eb'; l.style.background=''; });
+        r.closest('label').style.borderColor = '#b7dfc9';
+        r.closest('label').style.background = '#e8f5ee';
+      });
+    });
+
     document.getElementById('mp-cancel').addEventListener('click', function(){ document.body.removeChild(sel); });
     document.getElementById('mp-go').addEventListener('click', function(){
       var ym = document.getElementById('month-sel').value;
+      var scope = box.querySelector('input[name=print-scope]:checked').value;
+      var office = scope === 'single' ? document.getElementById('office-sel').value : null;
       document.body.removeChild(sel);
-      executePrintMonthly(ym);
+      executePrintMonthly(ym, office);
     });
   }
 
-  function executePrintMonthly(ym) {
+  function executePrintMonthly(ym, officeFilter) {
     var label = ym.replace('-','年') + '月';
-    var target = incidents.filter(function(i){ return i.incidentDate && i.incidentDate.startsWith(ym); });
-    if (!target.length) { showToast('⚠️ '+label+'のデータがありません','#d97706'); return; }
+    var target = incidents.filter(function(i){
+      if (!i.incidentDate || !i.incidentDate.startsWith(ym)) return false;
+      if (officeFilter && i.office !== officeFilter) return false;
+      return true;
+    });
+    if (!target.length) {
+      var msg = officeFilter ? label+'　'+(OFFICE_SHORT[officeFilter]||officeFilter)+'のデータがありません' : label+'のデータがありません';
+      showToast('⚠️ '+msg,'#d97706'); return;
+    }
 
     var now = new Date().toLocaleString('ja-JP');
+    var titleLabel = officeFilter ? label+'　'+(OFFICE_SHORT[officeFilter]||officeFilter) : label+'　全事業所';
 
     // 事業所ごとにグループ化
     var grouped = {};
@@ -1209,7 +1284,7 @@ function doGet(e){ return doPost(e); }</div>
     var sheet = document.getElementById('mp-sheet');
     sheet.innerHTML =
       '<div class="mp-header">'
-      +'<h1>インシデント一覧　'+label+'</h1>'
+      +'<h1>インシデント一覧　'+titleLabel+'</h1>'
       +'<p>（株）こすもす<br>出力日時：'+now+'</p>'
       +'</div>'
       +'<div class="mp-summary">'
