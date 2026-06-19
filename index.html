@@ -682,7 +682,6 @@ function doGet(e){ return doPost(e); }</div>
   try { incidents = JSON.parse(lsGet('cosmosu_inc')||'[]'); } catch(e) { incidents=[]; }
   var gasUrl = lsGet('cosmosu_gas')||'https://script.google.com/macros/s/AKfycbzIz412SFU9sSJnpe-A6pLAkT5xokEM-dfB9CsMjKrTSUW6oSuYyAp68AXa3Lbvt8s/exec';
   var activeOfficeTab = 'all';
-  var activeDirOfficeTab = 'all';
 
   // ===== ページ切り替え =====
   function showPage(p) {
@@ -737,20 +736,10 @@ function doGet(e){ return doPost(e); }</div>
       if (card) openModal(Number(card.getAttribute('data-id')));
     });
 
-    // 所長コメント保存（委譲）
-    document.getElementById('dir-list').addEventListener('click', function(e) {
-      var btn = e.target.closest('[data-cmt]');
-      if (btn) saveComment(Number(btn.getAttribute('data-cmt')));
-    });
-
     // 事業所タブ（委譲）
     document.getElementById('office-tabs').addEventListener('click', function(e) {
       var btn = e.target.closest('[data-office]');
       if (btn) { activeOfficeTab = btn.getAttribute('data-office'); buildOfficeTabs(); renderList(); }
-    });
-    document.getElementById('dir-office-tabs').addEventListener('click', function(e) {
-      var btn = e.target.closest('[data-diroffice]');
-      if (btn) { activeDirOfficeTab = btn.getAttribute('data-diroffice'); buildDirOfficeTabs(); renderDirList(); }
     });
 
     // フィルター
