@@ -528,27 +528,6 @@ textarea{resize:vertical;min-height:90px}
     <button class="blo" id="btn-dir-logout">一般画面に戻る</button>
   </div>
   <div class="otabs" id="dir-office-tabs"></div>
-  <div class="fb">
-    <select id="dir-fl-type">
-      <option value="">発生分類：すべて</option>
-      <option>内服</option><option>注射</option><option>処置</option>
-      <option>急変時の対応</option><option>日常生活の世話</option><option>転倒転落</option>
-      <option>器物破損</option><option>接遇</option><option>事務</option><option>勤務</option><option>その他</option>
-    </select>
-    <select id="dir-fl-cause">
-      <option value="">原因分類：すべて</option>
-      <option>観察不足</option><option>判断遅れ</option><option>技量不足</option>
-      <option>連絡不足</option><option>説明不足</option><option>思い込み</option>
-      <option>確認不足</option><option>知識不足</option><option>経験不足</option>
-      <option>管理ミス</option><option>指示ミス</option><option>危機察知</option><option>その他</option>
-    </select>
-    <select id="dir-fl-comment">
-      <option value="">コメント：すべて</option>
-      <option value="none">未入力のみ</option>
-      <option value="done">入力済みのみ</option>
-    </select>
-  </div>
-  <div id="dir-list"></div>
 </div>
 
 <div id="page-setup" class="page">
@@ -746,9 +725,7 @@ function doGet(e){ return doPost(e); }</div>
     document.getElementById('fl-type').addEventListener('change', renderList);
     document.getElementById('fl-cause').addEventListener('change', renderList);
     document.getElementById('fl-kw').addEventListener('input', renderList);
-    document.getElementById('dir-fl-type').addEventListener('change', renderDirList);
-    document.getElementById('dir-fl-cause').addEventListener('change', renderDirList);
-    document.getElementById('dir-fl-comment').addEventListener('change', renderDirList);
+
 
     // URL パラメータで設定アクセス確認
     try {
