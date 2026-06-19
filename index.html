@@ -1327,8 +1327,6 @@ function doGet(e){ return doPost(e); }</div>
         return '<tr>'
           +'<td class="td-date" style="text-align:center">'+(idx+1)+'</td>'
           +'<td class="td-date">'+(i.incidentDate||'')+'<br>'+(i.incidentTime||'')+'</td>'
-          +'<td>'+(i.reporter||'')+'</td>'
-          +'<td>'+(i.patientName||'')+'</td>'
           +'<td class="td-type">'+(i.incType||'')+'</td>'
           +'<td class="td-cause">'+(i.causeType||'')+'</td>'
           +'<td class="td-txt">'+(i.situation||'').substring(0,80)+(i.situation&&i.situation.length>80?'…':'')+'</td>'
@@ -1338,7 +1336,7 @@ function doGet(e){ return doPost(e); }</div>
       sectionsHtml += '<div class="mp-office-section">'
         +'<div class="mp-office-title">'+office+' （'+rows.length+'件）</div>'
         +'<table class="mp-table">'
-        +'<thead><tr><th>No</th><th>発生日時</th><th>報告者</th><th>利用者様</th><th>発生分類</th><th>原因分類</th><th>発生状況（要約）</th><th>所長コメント</th></tr></thead>'
+        +'<thead><tr><th>No</th><th>発生日時</th><th>発生分類</th><th>原因分類</th><th>発生状況（要約）</th><th>コメント</th></tr></thead>'
         +'<tbody>'+rowsHtml+'</tbody>'
         +'</table></div>';
     });
