@@ -628,6 +628,16 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({ok:true,data:rows}))
         .setMimeType(ContentService.MimeType.JSON);
     }
+    if (data.action === "delete") {
+      const vals = sheet.getDataRange().getValues();
+      for (let i = 1; i < vals.length; i++) {
+        if (String(vals[i][0]) === String(data.id)) {
+          sheet.deleteRow(i+1); break;
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ok:true}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
     return ContentService.createTextOutput(JSON.stringify({ok:true}))
       .setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
@@ -648,7 +658,7 @@ function doGet(e){ return doPost(e); }</div>
 
 <div class="mo" id="modal">
   <div class="mw">
-    <div class="mh"><h2>インシデント詳細</h2><div style="display:flex;align-items:center;gap:8px"><button class="btn-print" id="btn-print"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>印刷</button><button class="mx" id="btn-close-modal">✕</button></div></div>
+    <div class="mh"><h2>インシデント詳細</h2><div style="display:flex;align-items:center;gap:8px"><button class="btn-print" id="btn-print"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>印刷</button><button id="btn-delete" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>削除</button><button class="mx" id="btn-close-modal">✕</button></div></div>
     <div class="mb" id="modal-body"></div>
     <div id="modal-comment"></div>
   </div>
@@ -738,6 +748,7 @@ function doGet(e){ return doPost(e); }</div>
     document.getElementById('btn-save-gas').addEventListener('click', saveGasUrl);
     document.getElementById('btn-close-modal').addEventListener('click', closeModal);
     document.getElementById('btn-print').addEventListener('click', printIncident);
+    document.getElementById('btn-delete').addEventListener('click', deleteIncident);
 
     // モーダル背景
     document.getElementById('modal').addEventListener('click', function(e) {
@@ -960,6 +971,29 @@ function doGet(e){ return doPost(e); }</div>
   function closeModal() {
     document.getElementById('modal').classList.remove('open');
     currentIncident = null;
+  }
+
+  function deleteIncident() {
+    var i = currentIncident;
+    if (!i) return;
+    var label = (i.incidentDate||'')+(i.incidentTime?' '+i.incidentTime:'')+(i.patientName?' 　'+i.patientName:'');
+    if (!confirm('以下のインシデントを削除しますか？\n\n'+label+'\n\nこの操作は取り消せません。')) return;
+
+    // ローカルから削除
+    incidents = incidents.filter(function(x){ return x.id !== i.id; });
+    lsSet('cosmosu_inc', JSON.stringify(incidents));
+
+    // GASのスプレッドシートからも削除
+    if (gasUrl) {
+      var url = gasUrl + '?data=' + encodeURIComponent(JSON.stringify({action:'delete', id:i.id}));
+      fetch(url).catch(function(){});
+    }
+
+    closeModal();
+    buildOfficeTabs();
+    updateStats();
+    renderList();
+    showToast('🗑️ 削除しました');
   }
 
   function printIncident() {
