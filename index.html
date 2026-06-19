@@ -144,12 +144,11 @@ textarea{resize:vertical;min-height:90px}
   header, nav, .ph, .sb, .otabs, .fb, .toast, .mo { display:none!important; }
   body { background:#fff!important; font-size:12pt; }
   .page { display:none!important; }
-  #print-area {
-    display:block!important;
-    padding:0;
-    margin:0;
-  }
 }
+body.printing-single #print-area { display:block!important; }
+body.printing-single #monthly-print-area { display:none!important; }
+body.printing-monthly #monthly-print-area { display:block!important; }
+body.printing-monthly #print-area { display:none!important; }
 #print-area { display:none; }
 
 .print-sheet {
@@ -270,14 +269,6 @@ textarea{resize:vertical;min-height:90px}
 
 /* ===== 月次印刷 ===== */
 #monthly-print-area { display:none; }
-@media print {
-  #monthly-print-area.printing {
-    display:block!important;
-    padding:0; margin:0;
-  }
-  #monthly-print-area.printing ~ * { display:none!important; }
-  body > *:not(#monthly-print-area):not(#print-area) { display:none!important; }
-}
 .mp-sheet {
   font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;
   font-size:10pt;
@@ -1074,7 +1065,9 @@ function doGet(e){ return doPost(e); }</div>
 
     document.getElementById('print-area').style.display = 'block';
     closeModal();
+    document.body.classList.add('printing-single');
     window.print();
+    document.body.classList.remove('printing-single');
     document.getElementById('print-area').style.display = 'none';
   }
 
@@ -1356,11 +1349,11 @@ function doGet(e){ return doPost(e); }</div>
       +'<div class="mp-footer">（株）こすもす　インシデント報告システム　出力：'+now+'</div>';
 
     var area = document.getElementById('monthly-print-area');
-    area.classList.add('printing');
     area.style.display = 'block';
+    document.body.classList.add('printing-monthly');
     window.print();
+    document.body.classList.remove('printing-monthly');
     area.style.display = 'none';
-    area.classList.remove('printing');
   }
 
   // ===== トースト =====
