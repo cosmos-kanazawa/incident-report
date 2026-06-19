@@ -796,20 +796,8 @@ function doGet(e){ return doPost(e); }</div>
     updateStats();
     renderList();
 
-    // GAS URLが設定されていれば自動で最新データ取得
-    if (gasUrl) {
-      fetch(gasUrl, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'fetch'})})
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-          if (res.ok && res.data && res.data.length > 0) {
-            incidents = res.data.reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
-            lsSet('cosmosu_inc', JSON.stringify(incidents));
-            buildOfficeTabs();
-            updateStats();
-            renderList();
-          }
-        }).catch(function(){});
-    }
+    // 起動時に自動でGASからデータ取得
+    if (gasUrl) { autoFetchFromGAS(); }
   }
 
   // ===== フォーム =====
@@ -1090,13 +1078,27 @@ function doGet(e){ return doPost(e); }</div>
   }
 
   // ===== GAS =====
+  function autoFetchFromGAS() {
+    var url = gasUrl + '?data=' + encodeURIComponent(JSON.stringify({action:'fetch'}));
+    fetch(url)
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        if (res.ok && res.data && res.data.length > 0) {
+          incidents = res.data.reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
+          lsSet('cosmosu_inc', JSON.stringify(incidents));
+          buildOfficeTabs(); updateStats(); renderList();
+        }
+      }).catch(function(){});
+  }
+
   function loadFromGAS() {
     if (!gasUrl) { showToast('⚠️ 設定画面でGASのURLを登録してください','#d97706'); return; }
-    fetch(gasUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'fetch'})})
-      .then(function(r){return r.json();})
+    var url = gasUrl + '?data=' + encodeURIComponent(JSON.stringify({action:'fetch'}));
+    fetch(url)
+      .then(function(r){ return r.json(); })
       .then(function(res){
         if (res.ok && res.data) {
-          incidents = res.data.reverse().map(function(d){return Object.assign(d,{id:Number(d.id)||Date.now()});});
+          incidents = res.data.reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
           lsSet('cosmosu_inc', JSON.stringify(incidents));
           buildOfficeTabs(); updateStats(); renderList();
           showToast('✅ '+incidents.length+'件取得しました');
