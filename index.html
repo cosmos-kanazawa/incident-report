@@ -610,8 +610,27 @@ function doPost(e) {
     }
     if (data.action === "fetch") {
       const vals = sheet.getDataRange().getValues();
+      // Date型を文字列に変換するヘルパー
+      const toStr = (v) => {
+        if (v instanceof Date) {
+          const y = v.getFullYear();
+          if (y < 2000 || y > 2100) return '';
+          const m = String(v.getMonth()+1).padStart(2,'0');
+          const d = String(v.getDate()).padStart(2,'0');
+          return y+'-'+m+'-'+d;
+        }
+        return v === null || v === undefined ? '' : String(v);
+      };
+      const toTimeStr = (v) => {
+        if (v instanceof Date) {
+          const h = String(v.getHours()).padStart(2,'0');
+          const m = String(v.getMinutes()).padStart(2,'0');
+          return h+':'+m;
+        }
+        return v === null || v === undefined ? '' : String(v);
+      };
       const rows = vals.slice(1).map(r => ({
-        id:r[0], reportDate:r[1], incidentDate:r[2], incidentTime:r[3],
+        id:r[0], reportDate:toStr(r[1]), incidentDate:toStr(r[2]), incidentTime:toTimeStr(r[3]),
         office:r[4], reporter:r[5], patientName:r[6], location:r[7],
         incType:r[8], causeType:r[9],
         situation:r[10], prevention:r[11], comment:r[12], timestamp:r[13]
@@ -721,14 +740,26 @@ function doGet(e){ return doPost(e); }</div>
   // ===== 日時フォーマット =====
   function formatDateTime(dateStr, timeStr) {
     if (!dateStr) return '—';
-    var parts = dateStr.split('-');
-    if (parts.length < 3) return dateStr;
-    var y = parts[0], m = parseInt(parts[1]), d = parseInt(parts[2]);
+    // スプレッドシートのDate型で返ってくる場合はISO文字列に変換
+    var dateObj = new Date(dateStr);
+    var y, m, d;
+    if (!isNaN(dateObj.getTime()) && String(dateStr).indexOf('-') === -1) {
+      y = dateObj.getFullYear(); m = dateObj.getMonth()+1; d = dateObj.getDate();
+    } else {
+      var parts = String(dateStr).split('-');
+      y = parseInt(parts[0]); m = parseInt(parts[1]); d = parseInt(parts[2]);
+    }
+    if (!y || y < 2000 || y > 2100) return '—';
     var result = y + '年' + m + '月' + d + '日';
-    if (timeStr) {
-      var tp = timeStr.split(':');
-      result += '　' + parseInt(tp[0]) + '時';
-      if (tp[1] && tp[1] !== '00') result += parseInt(tp[1]) + '分';
+    // timeStrが不正（1899など）でないか確認
+    if (timeStr && String(timeStr).indexOf(':') !== -1) {
+      var tp = String(timeStr).split(':');
+      var h = parseInt(tp[0]);
+      var min = parseInt(tp[1]);
+      if (h >= 0 && h <= 23) {
+        result += '　' + h + '時';
+        if (min && min > 0) result += min + '分';
+      }
     }
     return result;
   }
@@ -862,6 +893,8 @@ function doGet(e){ return doPost(e); }</div>
     }
     showToast('✅ 報告を送信しました');
     resetForm();
+    // 送信後GASから最新データを再取得して同期
+    if (gasUrl) { setTimeout(autoFetchFromGAS, 1500); }
   }
 
   function resetForm() {
@@ -1152,7 +1185,7 @@ function doGet(e){ return doPost(e); }</div>
       .then(function(r){ return r.json(); })
       .then(function(res){
         if (res.ok && res.data && res.data.length > 0) {
-          incidents = res.data.reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
+          incidents = res.data.slice().reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
           lsSet('cosmosu_inc', JSON.stringify(incidents));
           buildOfficeTabs(); updateStats(); renderList();
         }
@@ -1166,7 +1199,7 @@ function doGet(e){ return doPost(e); }</div>
       .then(function(r){ return r.json(); })
       .then(function(res){
         if (res.ok && res.data) {
-          incidents = res.data.reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
+          incidents = res.data.slice().reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
           lsSet('cosmosu_inc', JSON.stringify(incidents));
           buildOfficeTabs(); updateStats(); renderList();
           showToast('✅ '+incidents.length+'件取得しました');
@@ -1311,8 +1344,8 @@ function doGet(e){ return doPost(e); }</div>
       if (officeFilter && i.office !== officeFilter) return false;
       return true;
     });
-    // 発生日時の昇順にソート
-    target.sort(function(a, b){
+    // 発生日時の昇順にソート（元配列を変えないようsliceしてから）
+    target = target.slice().sort(function(a, b){
       var da = (a.incidentDate||'') + ' ' + (a.incidentTime||'00:00');
       var db = (b.incidentDate||'') + ' ' + (b.incidentTime||'00:00');
       return da < db ? -1 : da > db ? 1 : 0;
