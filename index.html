@@ -490,7 +490,7 @@ body.printing-monthly #print-area { display:none!important; }
   <div class="sb">
     <div class="sc"><div class="sn" id="st-total">0</div><div class="slb">総件数</div></div>
     <div class="sc"><div class="sn" id="st-month">0</div><div class="slb">今月</div></div>
-    <div class="sc"><div class="sn" id="st-nocomment">0</div><div class="slb">コメント未入力</div></div>
+    <div class="sc"><div class="sn" id="st-nocomment">0</div><div class="slb">所長未確認</div></div>
     <div class="sc"><div class="sn" id="st-top" style="font-size:13px;padding-top:4px">—</div><div class="slb">最多発生分類</div></div>
   </div>
   <div class="otabs" id="office-tabs"></div>
@@ -671,10 +671,20 @@ function doGet(e){ return doPost(e); }</div>
     <div class="mh"><h2>インシデント詳細</h2><div style="display:flex;align-items:center;gap:8px"><button class="btn-print" id="btn-print"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>印刷</button><button id="btn-delete" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>削除</button><button class="mx" id="btn-close-modal">✕</button></div></div>
     <div class="mb" id="modal-body"></div>
     <div id="modal-comment"></div>
-    <div id="modal-cmt-form" style="padding:12px 22px 18px;border-top:1px solid #f3f4f6;background:#fef3c7;">
-      <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:6px">🖊️ コメント</div>
-      <textarea id="modal-cmt-input" style="width:100%;padding:8px 11px;border:1px solid #fde68a;border-radius:6px;font-size:14px;font-family:inherit;color:#1f2937;background:#fff;resize:vertical;min-height:64px;" placeholder="コメントを入力…"></textarea>
-      <button id="btn-save-comment" style="margin-top:8px;background:#d97706;color:#fff;border:none;padding:8px 20px;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">保存</button>
+    <div id="modal-cmt-form" style="padding:14px 22px 18px;border-top:1px solid #f3f4f6;background:#fef3c7;">
+      <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:10px">🏷️ 所長確認・コメント</div>
+      <!-- 所長確認チェック -->
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:12px;padding:10px 14px;background:#fff;border:1.5px solid #fde68a;border-radius:8px;">
+        <input type="checkbox" id="modal-cmt-check" style="width:18px;height:18px;accent-color:#1a6b4a;cursor:pointer;flex-shrink:0;">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#1f2937">所長確認済み</div>
+          <div style="font-size:11px;color:#6b7280">チェックを入れると確認済みとして記録されます</div>
+        </div>
+      </label>
+      <!-- 所長コメント -->
+      <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:5px">所長コメント <span style="font-weight:400;color:#9ca3af">（任意）</span></div>
+      <textarea id="modal-cmt-input" style="width:100%;padding:8px 11px;border:1px solid #fde68a;border-radius:6px;font-size:14px;font-family:inherit;color:#1f2937;background:#fff;resize:vertical;min-height:60px;" placeholder="コメントがあれば入力…"></textarea>
+      <button id="btn-save-comment" style="margin-top:10px;background:#d97706;color:#fff;border:none;padding:9px 22px;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;">保存</button>
     </div>
   </div>
 </div>
@@ -910,7 +920,7 @@ function doGet(e){ return doPost(e); }</div>
     var ym = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
     document.getElementById('st-total').textContent = incidents.length;
     document.getElementById('st-month').textContent = incidents.filter(function(i){return i.incidentDate&&i.incidentDate.startsWith(ym);}).length;
-    document.getElementById('st-nocomment').textContent = incidents.filter(function(i){return !i.comment;}).length;
+    document.getElementById('st-nocomment').textContent = incidents.filter(function(i){return !i.checked;}).length;
     var cnt = {};
     incidents.forEach(function(i){if(i.incType) cnt[i.incType]=(cnt[i.incType]||0)+1;});
     var top = Object.entries(cnt).sort(function(a,b){return b[1]-a[1];})[0];
@@ -975,7 +985,12 @@ function doGet(e){ return doPost(e); }</div>
         +'<span>✏️ '+(i.reporter||'')+'</span>'
         +'<span style="color:var(--c400)">'+(i.timestamp||'')+'</span>'
         +'</div>'
-        +(i.comment?'<div class="icc"><strong>所長コメント：</strong>'+i.comment+'</div>':'')
+        +(i.checked||i.comment
+        ?'<div class="icc">'
+          +(i.checked?'<span style="background:#d1fae5;color:#065f46;font-weight:700;padding:1px 7px;border-radius:4px;font-size:11px;margin-right:6px">✅ 所長確認済</span>':'')
+          +(i.comment?'<strong>コメント：</strong>'+i.comment:'')
+          +'</div>'
+        :'')
         +'</div>';
     }).join('');
   }
@@ -1003,6 +1018,7 @@ function doGet(e){ return doPost(e); }</div>
       +'<div class="dtxt">'+(i.prevention||'—')+'</div>';
     document.getElementById('modal-comment').innerHTML = '';
     document.getElementById('modal-cmt-input').value = i.comment || '';
+    document.getElementById('modal-cmt-check').checked = i.checked === true || i.checked === 'true';
     document.getElementById('modal').classList.add('open');
   }
   function closeModal() {
@@ -1014,17 +1030,19 @@ function doGet(e){ return doPost(e); }</div>
     var i = currentIncident;
     if (!i) return;
     var cmt = document.getElementById('modal-cmt-input').value.trim();
+    var checked = document.getElementById('modal-cmt-check').checked;
     var idx = -1;
     incidents.forEach(function(x,n){ if(x.id===i.id) idx=n; });
     if (idx === -1) return;
     incidents[idx].comment = cmt;
+    incidents[idx].checked = checked;
     currentIncident = incidents[idx];
     lsSet('cosmosu_inc', JSON.stringify(incidents));
     if (gasUrl) {
-      var url = gasUrl + '?data=' + encodeURIComponent(JSON.stringify({action:'comment',id:i.id,comment:cmt}));
+      var url = gasUrl + '?data=' + encodeURIComponent(JSON.stringify({action:'comment',id:i.id,comment:cmt,checked:checked}));
       fetch(url).catch(function(){});
     }
-    showToast('💬 コメントを保存しました');
+    showToast(checked ? '✅ 所長確認済みとして保存しました' : '💬 コメントを保存しました');
     buildOfficeTabs();
     updateStats();
     renderList();
