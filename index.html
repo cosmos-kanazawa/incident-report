@@ -340,10 +340,10 @@ body.printing-monthly #print-area { display:none!important; }
   line-height:1.5;
 }
 .mp-table tr:nth-child(even) td { background:#f9fafb; }
-.mp-table .td-date { white-space:nowrap; text-align:center; }
+.mp-table .td-date { white-space:nowrap; }
 .mp-table .td-type { text-align:center; white-space:nowrap; }
 .mp-table .td-cause { text-align:center; white-space:nowrap; }
-.mp-table .td-txt { max-width:200px; }
+.mp-table .td-txt { max-width:160px; word-break:break-all; white-space:pre-wrap; }
 .mp-table .td-comment { max-width:120px; color:#92400e; }
 .mp-footer {
   margin-top:14px;
@@ -716,6 +716,21 @@ function doGet(e){ return doPost(e); }</div>
     if (p === 'list')     { buildOfficeTabs(); updateStats(); renderList(); }
     if (p === 'director') { buildDirOfficeTabs(); renderDirList(); }
     if (p === 'setup')    { updateDirUrlDisplay(); }
+  }
+
+  // ===== 日時フォーマット =====
+  function formatDateTime(dateStr, timeStr) {
+    if (!dateStr) return '—';
+    var parts = dateStr.split('-');
+    if (parts.length < 3) return dateStr;
+    var y = parts[0], m = parseInt(parts[1]), d = parseInt(parts[2]);
+    var result = y + '年' + m + '月' + d + '日';
+    if (timeStr) {
+      var tp = timeStr.split(':');
+      result += '　' + parseInt(tp[0]) + '時';
+      if (tp[1] && tp[1] !== '00') result += parseInt(tp[1]) + '分';
+    }
+    return result;
   }
 
   // ===== 初期化 =====
@@ -1296,6 +1311,12 @@ function doGet(e){ return doPost(e); }</div>
       if (officeFilter && i.office !== officeFilter) return false;
       return true;
     });
+    // 発生日時の昇順にソート
+    target.sort(function(a, b){
+      var da = (a.incidentDate||'') + ' ' + (a.incidentTime||'00:00');
+      var db = (b.incidentDate||'') + ' ' + (b.incidentTime||'00:00');
+      return da < db ? -1 : da > db ? 1 : 0;
+    });
     if (!target.length) {
       var msg = officeFilter ? label+'　'+(OFFICE_SHORT[officeFilter]||officeFilter)+'のデータがありません' : label+'のデータがありません';
       showToast('⚠️ '+msg,'#d97706'); return;
@@ -1319,17 +1340,18 @@ function doGet(e){ return doPost(e); }</div>
       var rowsHtml = rows.map(function(i, idx) {
         return '<tr>'
           +'<td class="td-date" style="text-align:center">'+(idx+1)+'</td>'
-          +'<td class="td-date">'+(i.incidentDate||'')+'<br>'+(i.incidentTime||'')+'</td>'
+          +'<td class="td-date">'+formatDateTime(i.incidentDate, i.incidentTime)+'</td>'
           +'<td class="td-type">'+(i.incType||'')+'</td>'
           +'<td class="td-cause">'+(i.causeType||'')+'</td>'
-          +'<td class="td-txt">'+(i.situation||'').substring(0,80)+(i.situation&&i.situation.length>80?'…':'')+'</td>'
+          +'<td class="td-txt">'+(i.situation||'')+'</td>'
+          +'<td class="td-txt">'+(i.prevention||'')+'</td>'
           +'<td class="td-comment">'+(i.comment||'')+'</td>'
           +'</tr>';
       }).join('');
       sectionsHtml += '<div class="mp-office-section">'
         +'<div class="mp-office-title">'+office+' （'+rows.length+'件）</div>'
         +'<table class="mp-table">'
-        +'<thead><tr><th>No</th><th>発生日時</th><th>発生分類</th><th>原因分類</th><th>発生状況（要約）</th><th>コメント</th></tr></thead>'
+        +'<thead><tr><th>No</th><th>発生日時</th><th>発生分類</th><th>原因分類</th><th>発生状況と対応</th><th>原因と予防策</th><th>コメント</th></tr></thead>'
         +'<tbody>'+rowsHtml+'</tbody>'
         +'</table></div>';
     });
