@@ -739,23 +739,15 @@ function doGet(e){ return doPost(e); }</div>
 
   // ===== 日時フォーマット =====
   function formatDateTime(dateStr, timeStr) {
-    if (!dateStr) return '—';
-    // スプレッドシートのDate型で返ってくる場合はISO文字列に変換
-    var dateObj = new Date(dateStr);
-    var y, m, d;
-    if (!isNaN(dateObj.getTime()) && String(dateStr).indexOf('-') === -1) {
-      y = dateObj.getFullYear(); m = dateObj.getMonth()+1; d = dateObj.getDate();
-    } else {
-      var parts = String(dateStr).split('-');
-      y = parseInt(parts[0]); m = parseInt(parts[1]); d = parseInt(parts[2]);
-    }
-    if (!y || y < 2000 || y > 2100) return '—';
+    var nd = normalizeDate(dateStr);
+    if (!nd) return '—';
+    var parts = nd.split('-');
+    var y = parseInt(parts[0]), m = parseInt(parts[1]), d = parseInt(parts[2]);
     var result = y + '年' + m + '月' + d + '日';
-    // timeStrが不正（1899など）でないか確認
-    if (timeStr && String(timeStr).indexOf(':') !== -1) {
-      var tp = String(timeStr).split(':');
-      var h = parseInt(tp[0]);
-      var min = parseInt(tp[1]);
+    var nt = normalizeTime(timeStr);
+    if (nt) {
+      var tp = nt.split(':');
+      var h = parseInt(tp[0]), min = parseInt(tp[1]);
       if (h >= 0 && h <= 23) {
         result += '　' + h + '時';
         if (min && min > 0) result += min + '分';
@@ -1185,7 +1177,14 @@ function doGet(e){ return doPost(e); }</div>
       .then(function(r){ return r.json(); })
       .then(function(res){
         if (res.ok && res.data && res.data.length > 0) {
-          incidents = res.data.slice().reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
+          incidents = res.data.slice().reverse().map(function(d){
+            return Object.assign(d,{
+              id:Number(d.id)||Date.now(),
+              incidentDate: normalizeDate(d.incidentDate),
+              incidentTime: normalizeTime(d.incidentTime),
+              reportDate: normalizeDate(d.reportDate)
+            });
+          });
           lsSet('cosmosu_inc', JSON.stringify(incidents));
           buildOfficeTabs(); updateStats(); renderList();
         }
@@ -1199,7 +1198,14 @@ function doGet(e){ return doPost(e); }</div>
       .then(function(r){ return r.json(); })
       .then(function(res){
         if (res.ok && res.data) {
-          incidents = res.data.slice().reverse().map(function(d){ return Object.assign(d,{id:Number(d.id)||Date.now()}); });
+          incidents = res.data.slice().reverse().map(function(d){
+            return Object.assign(d,{
+              id:Number(d.id)||Date.now(),
+              incidentDate: normalizeDate(d.incidentDate),
+              incidentTime: normalizeTime(d.incidentTime),
+              reportDate: normalizeDate(d.reportDate)
+            });
+          });
           lsSet('cosmosu_inc', JSON.stringify(incidents));
           buildOfficeTabs(); updateStats(); renderList();
           showToast('✅ '+incidents.length+'件取得しました');
@@ -1247,11 +1253,39 @@ function doGet(e){ return doPost(e); }</div>
   }
 
   // ===== 月次印刷 =====
+  function normalizeDate(v) {
+    if (!v) return '';
+    // すでにYYYY-MM-DD形式
+    if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}/.test(v)) return v.substring(0,10);
+    // Date型またはDate文字列
+    var d = new Date(v);
+    if (!isNaN(d.getTime()) && d.getFullYear() >= 2000) {
+      var y = d.getFullYear();
+      var m = String(d.getMonth()+1).padStart(2,'0');
+      var day = String(d.getDate()).padStart(2,'0');
+      return y+'-'+m+'-'+day;
+    }
+    return '';
+  }
+
+  function normalizeTime(v) {
+    if (!v) return '';
+    if (typeof v === 'string' && /^\d{2}:\d{2}/.test(v)) return v.substring(0,5);
+    var d = new Date(v);
+    if (!isNaN(d.getTime())) {
+      var h = String(d.getHours()).padStart(2,'0');
+      var m = String(d.getMinutes()).padStart(2,'0');
+      return h+':'+m;
+    }
+    return '';
+  }
+
   function getMonthOptions() {
     var months = {};
     incidents.forEach(function(i) {
-      if (i.incidentDate) {
-        var ym = i.incidentDate.substring(0,7);
+      var nd = normalizeDate(i.incidentDate);
+      if (nd) {
+        var ym = nd.substring(0,7);
         months[ym] = (months[ym]||0) + 1;
       }
     });
@@ -1340,14 +1374,15 @@ function doGet(e){ return doPost(e); }</div>
   function executePrintMonthly(ym, officeFilter) {
     var label = ym.replace('-','年') + '月';
     var target = incidents.filter(function(i){
-      if (!i.incidentDate || !i.incidentDate.startsWith(ym)) return false;
+      var nd = normalizeDate(i.incidentDate);
+      if (!nd || !nd.startsWith(ym)) return false;
       if (officeFilter && i.office !== officeFilter) return false;
       return true;
     });
     // 発生日時の昇順にソート（元配列を変えないようsliceしてから）
     target = target.slice().sort(function(a, b){
-      var da = (a.incidentDate||'') + ' ' + (a.incidentTime||'00:00');
-      var db = (b.incidentDate||'') + ' ' + (b.incidentTime||'00:00');
+      var da = normalizeDate(a.incidentDate) + ' ' + (normalizeTime(a.incidentTime)||'00:00');
+      var db = normalizeDate(b.incidentDate) + ' ' + (normalizeTime(b.incidentTime)||'00:00');
       return da < db ? -1 : da > db ? 1 : 0;
     });
     if (!target.length) {
