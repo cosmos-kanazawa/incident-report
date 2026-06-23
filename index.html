@@ -1109,15 +1109,16 @@ function doGet(e){ return doPost(e); }</div>
       +'<div class="print-text-box">'+(i.prevention||'—')+'</div>'
       +'</div>'
 
-      +(i.comment
-        ?'<div class="print-section">'
-         +'<div class="print-comment-title">🏷️ 所長コメント</div>'
-         +'<div class="print-comment-box">'+i.comment+'</div>'
-         +'</div>'
-        :'<div class="print-section">'
-         +'<div class="print-comment-title">🏷️ 所長コメント</div>'
-         +'<div class="print-comment-box" style="min-height:50px;color:#aaa">（未記入）</div>'
-         +'</div>')
+      +'<div class="print-section">'
+      +'<div class="print-comment-title">🏷️ 所長確認・コメント</div>'
+      +'<div class="print-comment-box">'
+      +(i.checked
+        ?'<div style="display:inline-flex;align-items:center;gap:6px;background:#d1fae5;color:#065f46;font-weight:700;padding:3px 12px;border-radius:5px;font-size:10pt;margin-bottom:6px">✅ 所長確認済み</div><br>'
+        :'<div style="display:inline-flex;align-items:center;gap:6px;background:#f3f4f6;color:#9ca3af;font-weight:700;padding:3px 12px;border-radius:5px;font-size:10pt;margin-bottom:6px">□ 未確認</div><br>'
+      )
+      +(i.comment?'<div style="margin-top:4px;font-size:10pt">'+i.comment+'</div>':'<div style="color:#aaa;font-size:10pt">（コメントなし）</div>')
+      +'</div>'
+      +'</div>'
 
       +'<div class="print-footer">（株）こすもす　インシデント報告システム　ID:'+i.id+'</div>';
 
@@ -1431,13 +1432,14 @@ function doGet(e){ return doPost(e); }</div>
           +'<td class="td-cause">'+(i.causeType||'')+'</td>'
           +'<td class="td-txt">'+(i.situation||'')+'</td>'
           +'<td class="td-txt">'+(i.prevention||'')+'</td>'
+          +'<td style="text-align:center;white-space:nowrap">'+(i.checked?'<span style="color:#065f46;font-weight:700">✅ 確認済</span>':'<span style="color:#9ca3af">未確認</span>')+'</td>'
           +'<td class="td-comment">'+(i.comment||'')+'</td>'
           +'</tr>';
       }).join('');
       sectionsHtml += '<div class="mp-office-section">'
         +'<div class="mp-office-title">'+office+' （'+rows.length+'件）</div>'
         +'<table class="mp-table">'
-        +'<thead><tr><th>No</th><th>発生日時</th><th>発生分類</th><th>原因分類</th><th>発生状況と対応</th><th>原因と予防策</th><th>コメント</th></tr></thead>'
+        +'<thead><tr><th>No</th><th>発生日時</th><th>発生分類</th><th>原因分類</th><th>発生状況と対応</th><th>原因と予防策</th><th>所長確認</th><th>コメント</th></tr></thead>'
         +'<tbody>'+rowsHtml+'</tbody>'
         +'</table></div>';
     });
@@ -1451,7 +1453,8 @@ function doGet(e){ return doPost(e); }</div>
       +'<div class="mp-summary">'
       +'<div>総件数：<span>'+target.length+'件</span></div>'
       +'<div>事業所数：<span>'+order.length+'か所</span></div>'
-      +'<div>コメント済：<span>'+target.filter(function(i){return i.comment;}).length+'件</span></div>'
+      +'<div>所長確認済：<span>'+target.filter(function(i){return i.checked;}).length+'件</span></div>'
+      +'<div>未確認：<span style="color:#dc2626">'+target.filter(function(i){return !i.checked;}).length+'件</span></div>'
       +'</div>'
       + sectionsHtml
       +'<div class="mp-footer">（株）こすもす　インシデント報告システム　出力：'+now+'</div>';
