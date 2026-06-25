@@ -490,7 +490,6 @@ body.printing-monthly #print-area { display:none!important; }
   <div class="sb">
     <div class="sc"><div class="sn" id="st-total">0</div><div class="slb">総件数</div></div>
     <div class="sc"><div class="sn" id="st-month">0</div><div class="slb">今月</div></div>
-    <div class="sc"><div class="sn" id="st-nocomment">0</div><div class="slb">所長未確認</div></div>
     <div class="sc"><div class="sn" id="st-top" style="font-size:13px;padding-top:4px">—</div><div class="slb">最多発生分類</div></div>
   </div>
   <div class="otabs" id="office-tabs"></div>
@@ -920,7 +919,6 @@ function doGet(e){ return doPost(e); }</div>
     var ym = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
     document.getElementById('st-total').textContent = incidents.length;
     document.getElementById('st-month').textContent = incidents.filter(function(i){return i.incidentDate&&i.incidentDate.startsWith(ym);}).length;
-    document.getElementById('st-nocomment').textContent = incidents.filter(function(i){return !i.checked;}).length;
     var cnt = {};
     incidents.forEach(function(i){if(i.incType) cnt[i.incType]=(cnt[i.incType]||0)+1;});
     var top = Object.entries(cnt).sort(function(a,b){return b[1]-a[1];})[0];
