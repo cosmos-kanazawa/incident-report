@@ -716,16 +716,18 @@ function doGet(e){ return doPost(e); }</div>
   <div class="ph"><h1>インシデント統計</h1><p>当月・年間の発生傾向を集計します。</p></div>
 
   <!-- 期間切り替え -->
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-    <div style="display:flex;border:1px solid var(--c200);border-radius:8px;overflow:hidden">
-      <button id="stats-btn-month" onclick="setStatsPeriod('month')" style="padding:8px 20px;font-size:14px;font-weight:700;font-family:inherit;border:none;cursor:pointer;background:var(--g);color:#fff">当月</button>
-      <button id="stats-btn-year" onclick="setStatsPeriod('year')" style="padding:8px 20px;font-size:14px;font-weight:700;font-family:inherit;border:none;cursor:pointer;background:#fff;color:var(--c600)">年間</button>
+  <div style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="display:flex;border:1px solid var(--c200);border-radius:8px;overflow:hidden">
+        <button id="stats-btn-month" style="padding:8px 20px;font-size:14px;font-weight:700;font-family:inherit;border:none;cursor:pointer;background:var(--g);color:#fff">当月</button>
+        <button id="stats-btn-year" style="padding:8px 20px;font-size:14px;font-weight:700;font-family:inherit;border:none;cursor:pointer;background:#fff;color:var(--c600)">年間</button>
+      </div>
+      <select id="stats-month-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff"></select>
+      <select id="stats-year-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff;display:none"></select>
     </div>
-    <select id="stats-month-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff"></select>
-    <select id="stats-year-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff;display:none"></select>
-    <button onclick="printStats()" style="margin-left:auto;padding:8px 16px;background:var(--g);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-      印刷
+    <button id="btn-print-stats" style="width:100%;padding:13px;background:var(--g);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      統計レポートを印刷
     </button>
   </div>
 
@@ -901,6 +903,9 @@ function doGet(e){ return doPost(e); }</div>
     document.getElementById('fl-type').addEventListener('change', renderList);
     document.getElementById('stats-month-sel').addEventListener('change', renderStats);
     document.getElementById('stats-year-sel').addEventListener('change', renderStats);
+    document.getElementById('stats-btn-month').addEventListener('click', function(){ setStatsPeriod('month'); });
+    document.getElementById('stats-btn-year').addEventListener('click', function(){ setStatsPeriod('year'); });
+    document.getElementById('btn-print-stats').addEventListener('click', printStats);
     document.getElementById('fl-cause').addEventListener('change', renderList);
     document.getElementById('fl-kw').addEventListener('input', renderList);
     document.getElementById('dir-fl-type').addEventListener('change', renderDirList);
