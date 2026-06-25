@@ -725,6 +725,9 @@ function doGet(e){ return doPost(e); }</div>
       </div>
       <select id="stats-month-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff"></select>
       <select id="stats-year-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff;display:none"></select>
+      <select id="stats-office-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff">
+        <option value="">事業所：全て</option>
+      </select>
     </div>
     <button id="btn-print-stats" style="width:100%;padding:13px;background:var(--g);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -733,7 +736,7 @@ function doGet(e){ return doPost(e); }</div>
   </div>
 
   <!-- サマリーカード -->
-  <div id="stats-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px"></div>
+  <div id="stats-summary" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px"></div>
 
   <!-- グラフエリア -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
@@ -903,6 +906,7 @@ function doGet(e){ return doPost(e); }</div>
     // フィルター
     document.getElementById('fl-type').addEventListener('change', renderList);
     document.getElementById('stats-month-sel').addEventListener('change', renderStats);
+    document.getElementById('stats-office-sel').addEventListener('change', renderStats);
     document.getElementById('stats-year-sel').addEventListener('change', renderStats);
     document.getElementById('stats-btn-month').addEventListener('click', function(){ setStatsPeriod('month'); });
     document.getElementById('stats-btn-year').addEventListener('click', function(){ setStatsPeriod('year'); });
@@ -1566,11 +1570,11 @@ function doGet(e){ return doPost(e); }</div>
   }
 
   function initStatsSelectors() {
+    var now = new Date();
     // 月セレクタ
     var months = {};
     incidents.forEach(function(i){ if(i.incidentDate) months[i.incidentDate.substring(0,7)]=1; });
     var mlist = Object.keys(months).sort().reverse();
-    var now = new Date();
     var curYM = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
     var msel = document.getElementById('stats-month-sel');
     msel.innerHTML = mlist.map(function(m){
@@ -1585,9 +1589,15 @@ function doGet(e){ return doPost(e); }</div>
     ysel.innerHTML = ylist.map(function(y){
       return '<option value="'+y+'"'+(y===curY?' selected':'')+'>'+y+'年</option>';
     }).join('');
+    // 事業所セレクタ
+    var osel = document.getElementById('stats-office-sel');
+    osel.innerHTML = '<option value="">事業所：全て</option>'
+      + OFFICES.filter(function(o){ return incidents.some(function(i){ return i.office===o; }); })
+               .map(function(o){ return '<option value="'+o+'">'+(OFFICE_SHORT[o]||o)+'</option>'; }).join('');
   }
 
   function getStatsData() {
+    var officeSel = document.getElementById('stats-office-sel') ? document.getElementById('stats-office-sel').value : '';
     var filtered;
     if (statsPeriod === 'month') {
       var ym = document.getElementById('stats-month-sel').value;
@@ -1596,6 +1606,7 @@ function doGet(e){ return doPost(e); }</div>
       var y = document.getElementById('stats-year-sel').value;
       filtered = incidents.filter(function(i){ return i.incidentDate && i.incidentDate.startsWith(y); });
     }
+    if (officeSel) filtered = filtered.filter(function(i){ return i.office === officeSel; });
     return filtered;
   }
 
@@ -1663,8 +1674,7 @@ function doGet(e){ return doPost(e); }</div>
     // サマリー
     document.getElementById('stats-summary').innerHTML =
       '<div class="stats-sum-card"><div class="stats-sum-num">'+total+'</div><div class="stats-sum-lbl">総件数</div></div>'
-      +'<div class="stats-sum-card"><div class="stats-sum-num" style="color:#059669">'+checked+'</div><div class="stats-sum-lbl">所長確認済</div></div>'
-      +'<div class="stats-sum-card"><div class="stats-sum-num" style="color:#dc2626">'+unchecked+'</div><div class="stats-sum-lbl">所長未確認</div></div>';
+      +'<div class="stats-sum-card"><div class="stats-sum-num" style="color:#059669">'+checked+'</div><div class="stats-sum-lbl">所長確認済</div></div>';
 
     // 発生分類
     var incTypes = countBy(data, 'incType');
@@ -1708,54 +1718,65 @@ function doGet(e){ return doPost(e); }</div>
 
   function printStats() {
     var data = getStatsData();
+    var officeSel = document.getElementById('stats-office-sel').value;
     var period = statsPeriod === 'month'
       ? document.getElementById('stats-month-sel').value.replace('-','年')+'月'
       : document.getElementById('stats-year-sel').value+'年';
+    if (officeSel) period += '　'+(OFFICE_SHORT[officeSel]||officeSel);
     var now = new Date().toLocaleString('ja-JP');
     var total = data.length;
     var checked = data.filter(function(i){return i.checked;}).length;
 
-    function tableHtml(title, rows) {
-      if (!rows.length) return '';
+    // SVG棒グラフ生成
+    function svgBar(rows, color) {
+      if (!rows.length) return '<div style="color:#aaa;font-size:9pt;padding:8px">データなし</div>';
       var max = rows[0][1];
-      return '<div style="margin-bottom:16px">'
-        +'<div style="font-size:10pt;font-weight:700;color:#fff;background:#1a6b4a;padding:3px 10px;border-radius:3px;margin-bottom:6px">'+title+'</div>'
-        +'<table style="width:100%;border-collapse:collapse;font-size:9.5pt">'
-        +'<thead><tr><th style="background:#e8f5ee;color:#1a6b4a;padding:4px 8px;border:1px solid #b7dfc9;text-align:left">項目</th><th style="background:#e8f5ee;color:#1a6b4a;padding:4px 8px;border:1px solid #b7dfc9;text-align:center;width:60px">件数</th><th style="background:#e8f5ee;color:#1a6b4a;padding:4px 8px;border:1px solid #b7dfc9;text-align:center;width:60px">割合</th></tr></thead>'
-        +'<tbody>'+rows.map(function(r,idx){
-          var pct = total > 0 ? Math.round(r[1]/total*100) : 0;
-          return '<tr style="'+(idx%2?'background:#f9fafb':'')+'">'
-            +'<td style="padding:4px 8px;border:1px solid #d1d5db">'+r[0]+'</td>'
-            +'<td style="padding:4px 8px;border:1px solid #d1d5db;text-align:center;font-weight:700">'+r[1]+'件</td>'
-            +'<td style="padding:4px 8px;border:1px solid #d1d5db;text-align:center">'+pct+'%</td>'
-            +'</tr>';
-        }).join('')+'</tbody></table></div>';
+      var W = 340, barH = 18, gap = 8, labelW = 110, numW = 36;
+      var svgH = rows.length * (barH + gap);
+      var trackW = W - labelW - numW - 10;
+      var bars = rows.map(function(r, i) {
+        var bw = max > 0 ? Math.max(2, Math.round(r[1]/max*trackW)) : 2;
+        var y = i*(barH+gap);
+        return '<text x="'+labelW+'" y="'+(y+barH*0.75)+'" font-size="9" fill="#374151" text-anchor="end">'+r[0]+'</text>'
+          +'<rect x="'+(labelW+4)+'" y="'+y+'" width="'+trackW+'" height="'+barH+'" rx="3" fill="#f3f4f6"/>'
+          +'<rect x="'+(labelW+4)+'" y="'+y+'" width="'+bw+'" height="'+barH+'" rx="3" fill="'+color+'"/>'
+          +'<text x="'+(labelW+4+trackW+6)+'" y="'+(y+barH*0.75)+'" font-size="9" font-weight="bold" fill="#374151">'+r[1]+'件</text>';
+      }).join('');
+      return '<svg width="'+W+'" height="'+svgH+'" xmlns="http://www.w3.org/2000/svg">'+bars+'</svg>';
     }
 
-    var incTypes = countBy(data, 'incType');
+    function section(title, rows, color) {
+      return '<div style="margin-bottom:18px;break-inside:avoid">'
+        +'<div style="font-size:10pt;font-weight:700;color:#fff;background:'+color+';padding:3px 10px;border-radius:3px;margin-bottom:8px">'+title+'</div>'
+        + svgBar(rows, color)
+        +'</div>';
+    }
+
+    var incTypes   = countBy(data, 'incType');
     var causeTypes = countBy(data, 'causeType');
-    var timeSlots = {};
+    var timeSlots  = {};
     data.forEach(function(i){ var s=getTimeSlot(i.incidentTime); timeSlots[s]=(timeSlots[s]||0)+1; });
-    var timeOrder = ['早朝（6〜9時）','午前（9〜12時）','昼（12〜15時）','午後（15〜18時）','夕方（18〜21時）','夜間（21〜6時）','不明'];
-    var timeData = timeOrder.filter(function(k){return timeSlots[k];}).map(function(k){return [k,timeSlots[k]];});
+    var timeOrder  = ['早朝（6〜9時）','午前（9〜12時）','昼（12〜15時）','午後（15〜18時）','夕方（18〜21時）','夜間（21〜6時）','不明'];
+    var timeData   = timeOrder.filter(function(k){return timeSlots[k];}).map(function(k){return [k,timeSlots[k]];});
     var officeData = countBy(data,'office').map(function(d){return [OFFICE_SHORT[d[0]]||d[0],d[1]];});
 
     var sheet = document.getElementById('stats-print-sheet');
     sheet.innerHTML =
-      '<div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2.5px solid #1a6b4a;padding-bottom:6px;margin-bottom:12px">'
+      '<div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2.5px solid #1a6b4a;padding-bottom:6px;margin-bottom:14px">'
       +'<div style="font-size:15pt;font-weight:700;color:#1a6b4a">インシデント統計レポート　'+period+'</div>'
       +'<div style="font-size:9pt;color:#555;text-align:right">（株）こすもす<br>出力日時：'+now+'</div>'
       +'</div>'
-      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">'
+      // サマリー（確認済のみ）
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">'
       +'<div style="border:1px solid #e5e7eb;border-radius:6px;padding:10px;text-align:center;border-top:3px solid #1a6b4a"><div style="font-size:20pt;font-weight:700;color:#1a6b4a">'+total+'</div><div style="font-size:9pt;color:#555">総件数</div></div>'
       +'<div style="border:1px solid #e5e7eb;border-radius:6px;padding:10px;text-align:center;border-top:3px solid #059669"><div style="font-size:20pt;font-weight:700;color:#059669">'+checked+'</div><div style="font-size:9pt;color:#555">所長確認済</div></div>'
-      +'<div style="border:1px solid #e5e7eb;border-radius:6px;padding:10px;text-align:center;border-top:3px solid #dc2626"><div style="font-size:20pt;font-weight:700;color:#dc2626">'+(total-checked)+'</div><div style="font-size:9pt;color:#555">所長未確認</div></div>'
       +'</div>'
+      // グラフ 2列
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
-      + tableHtml('発生分類別件数', incTypes)
-      + tableHtml('原因分類別件数', causeTypes)
-      + tableHtml('時間帯別件数', timeData)
-      + tableHtml('事業所別件数', officeData)
+      + section('発生分類別件数', incTypes, '#1a6b4a')
+      + section('原因分類別件数', causeTypes, '#2d8f63')
+      + section('時間帯別件数', timeData, '#d97706')
+      + section('事業所別件数', officeData, '#5b21b6')
       +'</div>';
 
     var area = document.getElementById('stats-print-area');
