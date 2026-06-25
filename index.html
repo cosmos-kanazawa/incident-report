@@ -1454,7 +1454,7 @@ function doGet(e){ return doPost(e); }</div>
       +'<div>総件数：<span>'+target.length+'件</span></div>'
       +'<div>事業所数：<span>'+order.length+'か所</span></div>'
       +'<div>所長確認済：<span>'+target.filter(function(i){return i.checked;}).length+'件</span></div>'
-      +'<div>未確認：<span style="color:#dc2626">'+target.filter(function(i){return !i.checked;}).length+'件</span></div>'
+      
       +'</div>'
       + sectionsHtml
       +'<div class="mp-footer">（株）こすもす　インシデント報告システム　出力：'+now+'</div>';
