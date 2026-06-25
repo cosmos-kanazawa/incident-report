@@ -569,6 +569,67 @@ body.printing-monthly #print-area { display:none!important; }
   <div id="dir-list"></div>
 </div>
 
+<div id="page-stats" class="page">
+  <div class="ph"><h1>インシデント統計</h1><p>当月・年間の発生傾向を集計します。</p></div>
+
+  <!-- 期間切り替え -->
+  <div style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="display:flex;border:1px solid var(--c200);border-radius:8px;overflow:hidden">
+        <button id="stats-btn-month" style="padding:8px 20px;font-size:14px;font-weight:700;font-family:inherit;border:none;cursor:pointer;background:var(--g);color:#fff">当月</button>
+        <button id="stats-btn-year" style="padding:8px 20px;font-size:14px;font-weight:700;font-family:inherit;border:none;cursor:pointer;background:#fff;color:var(--c600)">年間</button>
+      </div>
+      <select id="stats-month-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff"></select>
+      <select id="stats-year-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff;display:none"></select>
+      <select id="stats-office-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff">
+        <option value="">事業所：全て</option>
+      </select>
+    </div>
+    <button id="btn-print-stats" style="width:100%;padding:13px;background:var(--g);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      統計レポートを印刷
+    </button>
+  </div>
+
+  <!-- サマリーカード -->
+  <div id="stats-summary" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px"></div>
+
+  <!-- グラフエリア -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <!-- 発生分類 棒グラフ -->
+    <div style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">発生分類別件数</div>
+      <div id="chart-inctype"></div>
+    </div>
+    <!-- 原因分類 棒グラフ -->
+    <div style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">原因分類別件数</div>
+      <div id="chart-causetype"></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <!-- 時間帯 棒グラフ -->
+    <div style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">時間帯別件数</div>
+      <div id="chart-timeslot"></div>
+    </div>
+    <!-- 事業所別 横棒グラフ -->
+    <div style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px">
+      <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">事業所別件数</div>
+      <div id="chart-office"></div>
+    </div>
+  </div>
+  <!-- 月別推移（年間のみ） -->
+  <div id="chart-monthly-wrap" style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px;margin-bottom:16px;display:none">
+    <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">月別推移</div>
+    <div id="chart-monthly"></div>
+  </div>
+</div>
+
+<!-- 統計印刷エリア -->
+<div id="stats-print-area" style="display:none">
+  <div id="stats-print-sheet" style="font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;font-size:11pt;padding:10mm 12mm"></div>
+
 <div id="page-setup" class="page">
   <div class="ph"><h1>システム設定</h1><p>Googleスプレッドシート連携と所長専用URLを管理します。</p></div>
   <div class="spc">
@@ -713,66 +774,6 @@ function doGet(e){ return doPost(e); }</div>
   <div class="print-sheet" id="print-sheet"></div>
 </div>
 
-<div id="page-stats" class="page">
-  <div class="ph"><h1>インシデント統計</h1><p>当月・年間の発生傾向を集計します。</p></div>
-
-  <!-- 期間切り替え -->
-  <div style="margin-bottom:16px">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
-      <div style="display:flex;border:1px solid var(--c200);border-radius:8px;overflow:hidden">
-        <button id="stats-btn-month" style="padding:8px 20px;font-size:14px;font-weight:700;font-family:inherit;border:none;cursor:pointer;background:var(--g);color:#fff">当月</button>
-        <button id="stats-btn-year" style="padding:8px 20px;font-size:14px;font-weight:700;font-family:inherit;border:none;cursor:pointer;background:#fff;color:var(--c600)">年間</button>
-      </div>
-      <select id="stats-month-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff"></select>
-      <select id="stats-year-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff;display:none"></select>
-      <select id="stats-office-sel" style="padding:7px 11px;font-size:14px;border:1px solid var(--c200);border-radius:7px;font-family:inherit;color:var(--c800);background:#fff">
-        <option value="">事業所：全て</option>
-      </select>
-    </div>
-    <button id="btn-print-stats" style="width:100%;padding:13px;background:var(--g);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-      統計レポートを印刷
-    </button>
-  </div>
-
-  <!-- サマリーカード -->
-  <div id="stats-summary" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px"></div>
-
-  <!-- グラフエリア -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-    <!-- 発生分類 棒グラフ -->
-    <div style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px">
-      <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">発生分類別件数</div>
-      <div id="chart-inctype"></div>
-    </div>
-    <!-- 原因分類 棒グラフ -->
-    <div style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px">
-      <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">原因分類別件数</div>
-      <div id="chart-causetype"></div>
-    </div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-    <!-- 時間帯 棒グラフ -->
-    <div style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px">
-      <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">時間帯別件数</div>
-      <div id="chart-timeslot"></div>
-    </div>
-    <!-- 事業所別 横棒グラフ -->
-    <div style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px">
-      <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">事業所別件数</div>
-      <div id="chart-office"></div>
-    </div>
-  </div>
-  <!-- 月別推移（年間のみ） -->
-  <div id="chart-monthly-wrap" style="background:#fff;border-radius:var(--r);box-shadow:var(--s);padding:18px;margin-bottom:16px;display:none">
-    <div style="font-size:14px;font-weight:700;color:var(--g);margin-bottom:14px">月別推移</div>
-    <div id="chart-monthly"></div>
-  </div>
-</div>
-
-<!-- 統計印刷エリア -->
-<div id="stats-print-area" style="display:none">
-  <div id="stats-print-sheet" style="font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;font-size:11pt;padding:10mm 12mm"></div>
 </div>
 
 <div id="monthly-print-area"><div class="mp-sheet" id="mp-sheet"></div></div>
@@ -826,6 +827,7 @@ function doGet(e){ return doPost(e); }</div>
     if (p === 'list')     { buildOfficeTabs(); updateStats(); renderList(); }
     if (p === 'director') { buildDirOfficeTabs(); renderDirList(); }
     if (p === 'setup')    { updateDirUrlDisplay(); }
+    if (p === 'stats')    { initStatsSelectors(); renderStats(); }
   }
 
   // ===== 日時フォーマット =====
@@ -1292,6 +1294,7 @@ function doGet(e){ return doPost(e); }</div>
           });
           lsSet('cosmosu_inc', JSON.stringify(incidents));
           buildOfficeTabs(); updateStats(); renderList();
+          initStatsSelectors(); renderStats();
         }
       }).catch(function(){});
   }
