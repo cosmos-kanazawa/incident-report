@@ -759,7 +759,7 @@ function doGet(e){ return doPost(e); }</div>
 <div class="toast" id="toast"><span id="toast-msg"></span></div>
 
 <script>
-(function() {
+
   // ===== 定数 =====
   var OFFICES = [
     'こすもす居宅介護支援事業所金沢','こすもす訪問看護ステーション金沢',
@@ -1046,7 +1046,7 @@ function doGet(e){ return doPost(e); }</div>
       return;
     }
     el.innerHTML = filtered.map(function(i) {
-      return '<div class="ic" data-id="'+i.id+'" onclick="window._openModal('+i.id+')" style="cursor:pointer">'
+      return '<div class="ic" onclick="openModal('+i.id+')" style="cursor:pointer">'
         +'<div class="ich"><div class="imeta">'
         +(activeOfficeTab==='all'?'<span class="badge bo">'+(OFFICE_SHORT[i.office]||i.office||'')+'</span>':'')
         +(i.incType?'<span class="badge bt">'+i.incType+'</span>':'')
@@ -1073,8 +1073,7 @@ function doGet(e){ return doPost(e); }</div>
   var currentIncident = null;
 
   // グローバルに公開（インライン onclick から呼べるように）
-  window._openModal = function(id) { openModal(id); };
-  window.openModal = function(id) { openModal(id); };
+
 
   function openModal(id) {
     var i = null;
@@ -1763,7 +1762,6 @@ function doGet(e){ return doPost(e); }</div>
     init();
   }
 
-})();
 </script>
 </body>
 </html>
