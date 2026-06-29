@@ -796,7 +796,7 @@ function doGet(e){ return doPost(e); }</div>
 
   // ===== ページ切り替え =====
   function showPage(p) {
-    ['report','list','director','setup'].forEach(function(name) {
+    ['report','list','director','stats','setup'].forEach(function(name) {
       var el = document.getElementById('page-'+name);
       if (el) el.classList.remove('active');
     });
