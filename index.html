@@ -842,53 +842,79 @@ function doGet(e){ return doPost(e); }</div>
       });
     });
 
+    // イベント登録（null安全）
+    function on(id, ev, fn) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener(ev, fn);
+    }
+
     // フォームボタン
-    document.getElementById('btn-submit').addEventListener('click', submitReport);
-    document.getElementById('btn-reset').addEventListener('click', resetForm);
-    document.getElementById('btn-load-gas').addEventListener('click', loadFromGAS);
-    document.getElementById('btn-monthly-print').addEventListener('click', printMonthly);
-    document.getElementById('btn-dir-logout').addEventListener('click', dirLogout);
-    document.getElementById('btn-copy-url').addEventListener('click', copyDirUrl);
-    document.getElementById('btn-save-key').addEventListener('click', saveDirKey);
-    document.getElementById('btn-save-gas').addEventListener('click', saveGasUrl);
-    document.getElementById('btn-close-modal').addEventListener('click', closeModal);
-    document.getElementById('btn-print').addEventListener('click', printIncident);
-    document.getElementById('btn-delete').addEventListener('click', deleteIncident);
-    document.getElementById('btn-save-comment').addEventListener('click', saveModalComment);
+    on('btn-submit', 'click', submitReport);
+    on('btn-reset', 'click', resetForm);
+    on('btn-load-gas', 'click', loadFromGAS);
+    on('btn-monthly-print', 'click', printMonthly);
+    on('btn-dir-logout', 'click', dirLogout);
+    on('btn-copy-url', 'click', copyDirUrl);
+    on('btn-save-key', 'click', saveDirKey);
+    on('btn-save-gas', 'click', saveGasUrl);
+    on('btn-close-modal', 'click', closeModal);
+    on('btn-print', 'click', printIncident);
+    on('btn-delete', 'click', deleteIncident);
+    on('btn-save-comment', 'click', saveModalComment);
 
     // モーダル背景
-    document.getElementById('modal').addEventListener('click', function(e) {
+    on('modal', 'click', function(e) {
       if (e.target === document.getElementById('modal')) closeModal();
     });
 
     // インシデントカード（委譲）
-    document.getElementById('incident-list').addEventListener('click', function(e) {
-      var card = e.target.closest('[data-id]');
-      if (card) openModal(Number(card.getAttribute('data-id')));
+    on('incident-list', 'click', function(e) {
+      var el = e.target;
+      while (el && el !== document.getElementById('incident-list')) {
+        if (el.getAttribute && el.getAttribute('data-id')) {
+          openModal(Number(el.getAttribute('data-id')));
+          return;
+        }
+        el = el.parentElement;
+      }
     });
 
     // 所長コメント保存（委譲）
-    document.getElementById('dir-list').addEventListener('click', function(e) {
-      var btn = e.target.closest('[data-cmt]');
-      if (btn) saveComment(Number(btn.getAttribute('data-cmt')));
+    on('dir-list', 'click', function(e) {
+      var el = e.target;
+      while (el && el !== document.getElementById('dir-list')) {
+        if (el.getAttribute && el.getAttribute('data-cmt')) {
+          saveComment(Number(el.getAttribute('data-cmt')));
+          return;
+        }
+        el = el.parentElement;
+      }
     });
 
     // 事業所タブ（委譲）
-    document.getElementById('office-tabs').addEventListener('click', function(e) {
-      var btn = e.target.closest('[data-office]');
-      if (btn) { activeOfficeTab = btn.getAttribute('data-office'); buildOfficeTabs(); renderList(); }
+    on('office-tabs', 'click', function(e) {
+      var el = e.target;
+      while (el && el !== document.getElementById('office-tabs')) {
+        if (el.getAttribute && el.getAttribute('data-office')) {
+          activeOfficeTab = el.getAttribute('data-office');
+          buildOfficeTabs();
+          renderList();
+          return;
+        }
+        el = el.parentElement;
+      }
     });
 
     // フィルター
-    document.getElementById('fl-type').addEventListener('change', renderList);
-    document.getElementById('stats-month-sel').addEventListener('change', renderStats);
-    document.getElementById('stats-office-sel').addEventListener('change', renderStats);
-    document.getElementById('stats-year-sel').addEventListener('change', renderStats);
-    document.getElementById('stats-btn-month').addEventListener('click', function(){ setStatsPeriod('month'); });
-    document.getElementById('stats-btn-year').addEventListener('click', function(){ setStatsPeriod('year'); });
-    document.getElementById('btn-print-stats').addEventListener('click', printStats);
-    document.getElementById('fl-cause').addEventListener('change', renderList);
-    document.getElementById('fl-kw').addEventListener('input', renderList);
+    on('fl-type', 'change', renderList);
+    on('fl-cause', 'change', renderList);
+    on('fl-kw', 'input', renderList);
+    on('stats-month-sel', 'change', renderStats);
+    on('stats-year-sel', 'change', renderStats);
+    on('stats-office-sel', 'change', renderStats);
+    on('stats-btn-month', 'click', function(){ setStatsPeriod('month'); });
+    on('stats-btn-year', 'click', function(){ setStatsPeriod('year'); });
+    on('btn-print-stats', 'click', printStats);
 
     // URL パラメータで所長・設定アクセス確認
     try {
