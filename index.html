@@ -1274,8 +1274,17 @@ function doGet(e){ return doPost(e); }</div>
             });
           });
           lsSet('cosmosu_inc', JSON.stringify(incidents));
-          buildOfficeTabs(); updateStats(); renderList();
-          if (document.getElementById('page-stats').classList.contains('active')) { initStatsSelectors(); renderStats(); }
+          // 現在表示中のページだけ更新
+          var activePage = document.querySelector('.page.active');
+          var activeId = activePage ? activePage.id : '';
+          if (activeId === 'page-list') {
+            buildOfficeTabs(); updateStats(); renderList();
+          } else if (activeId === 'page-stats') {
+            initStatsSelectors(); renderStats();
+          } else {
+            // 報告入力など他のページ表示中はデータだけ更新（画面は触らない）
+            buildOfficeTabs(); updateStats();
+          }
         }
       }).catch(function(){});
   }
