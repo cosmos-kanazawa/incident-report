@@ -22,7 +22,7 @@ nav button{background:transparent;border:1px solid rgba(255,255,255,.3);color:rg
 nav button:hover{background:rgba(255,255,255,.15);color:#fff}
 nav button.active{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.6)}
 #nav-director{display:none}
-.page{display:none;padding:24px 18px;max-width:900px;margin:0 auto}
+.page{display:none;padding:24px 18px;max-width:900px;margin:0 auto}.page.active{display:block}
 .page.active{display:block}
 .ph{margin-bottom:20px}
 .ph h1{font-size:22px;font-weight:700;color:var(--g);margin-bottom:4px}
@@ -545,27 +545,6 @@ body.printing-monthly #print-area { display:none!important; }
     </div>
     <button class="blo" id="btn-dir-logout">一般画面に戻る</button>
   </div>
-  <div class="otabs" id="dir-office-tabs"></div>
-  <div class="fb">
-    <select id="dir-fl-type">
-      <option value="">発生分類：すべて</option>
-      <option>内服</option><option>注射</option><option>処置</option>
-      <option>急変時の対応</option><option>日常生活の世話</option><option>転倒転落</option>
-      <option>器物破損</option><option>接遇</option><option>事務</option><option>勤務</option><option>その他</option>
-    </select>
-    <select id="dir-fl-cause">
-      <option value="">原因分類：すべて</option>
-      <option>観察不足</option><option>判断遅れ</option><option>技量不足</option>
-      <option>連絡不足</option><option>説明不足</option><option>思い込み</option>
-      <option>確認不足</option><option>知識不足</option><option>経験不足</option>
-      <option>管理ミス</option><option>指示ミス</option><option>危機察知</option><option>その他</option>
-    </select>
-    <select id="dir-fl-comment">
-      <option value="">コメント：すべて</option>
-      <option value="none">未入力のみ</option>
-      <option value="done">入力済みのみ</option>
-    </select>
-  </div>
   <div id="dir-list"></div>
 </div>
 
@@ -811,7 +790,6 @@ function doGet(e){ return doPost(e); }</div>
   var gasUrl = lsGet('cosmosu_gas')||'https://script.google.com/macros/s/AKfycbzIz412SFU9sSJnpe-A6pLAkT5xokEM-dfB9CsMjKrTSUW6oSuYyAp68AXa3Lbvt8s/exec';
   var dirKey = lsGet('cosmosu_dirkey')||'director-cosmosu2024';
   var activeOfficeTab = 'all';
-  var activeDirOfficeTab = 'all';
 
   // ===== ページ切り替え =====
   function showPage(p) {
@@ -825,7 +803,7 @@ function doGet(e){ return doPost(e); }</div>
       b.classList.toggle('active', b.getAttribute('data-page') === p);
     });
     if (p === 'list')     { buildOfficeTabs(); updateStats(); renderList(); }
-    if (p === 'director') { buildDirOfficeTabs(); renderDirList(); }
+    if (p === 'director') {   }
     if (p === 'setup')    { updateDirUrlDisplay(); }
     if (p === 'stats')    { initStatsSelectors(); renderStats(); }
   }
@@ -900,10 +878,6 @@ function doGet(e){ return doPost(e); }</div>
       var btn = e.target.closest('[data-office]');
       if (btn) { activeOfficeTab = btn.getAttribute('data-office'); buildOfficeTabs(); renderList(); }
     });
-    document.getElementById('dir-office-tabs').addEventListener('click', function(e) {
-      var btn = e.target.closest('[data-diroffice]');
-      if (btn) { activeDirOfficeTab = btn.getAttribute('data-diroffice'); buildDirOfficeTabs(); renderDirList(); }
-    });
 
     // フィルター
     document.getElementById('fl-type').addEventListener('change', renderList);
@@ -915,9 +889,6 @@ function doGet(e){ return doPost(e); }</div>
     document.getElementById('btn-print-stats').addEventListener('click', printStats);
     document.getElementById('fl-cause').addEventListener('change', renderList);
     document.getElementById('fl-kw').addEventListener('input', renderList);
-    document.getElementById('dir-fl-type').addEventListener('change', renderDirList);
-    document.getElementById('dir-fl-cause').addEventListener('change', renderDirList);
-    document.getElementById('dir-fl-comment').addEventListener('change', renderDirList);
 
     // URL パラメータで所長・設定アクセス確認
     try {
@@ -1028,18 +999,7 @@ function doGet(e){ return doPost(e); }</div>
     el.innerHTML = html;
   }
 
-  function buildDirOfficeTabs() {
-    var el = document.getElementById('dir-office-tabs');
-    var html = '<button class="otab'+(activeDirOfficeTab==='all'?' active':'')+'" data-diroffice="all">すべて<span class="cnt">'+incidents.length+'</span></button>';
-    OFFICES.forEach(function(o) {
-      var cnt = incidents.filter(function(i){return i.office===o;}).length;
-      if (cnt === 0) return;
-      html += '<button class="otab'+(activeDirOfficeTab===o?' active':'')+'" data-diroffice="'+o+'">'+(OFFICE_SHORT[o]||o)+'<span class="cnt">'+cnt+'</span></button>';
-    });
-    el.innerHTML = html;
-  }
 
-  // ===== 一覧 =====
   function renderList() {
     var tyF = document.getElementById('fl-type').value;
     var caF = document.getElementById('fl-cause').value;
@@ -1229,37 +1189,6 @@ function doGet(e){ return doPost(e); }</div>
     showPage('list');
   }
 
-  function renderDirList() {
-    var tyF  = document.getElementById('dir-fl-type').value;
-    var caF  = document.getElementById('dir-fl-cause').value;
-    var cmtF = document.getElementById('dir-fl-comment').value;
-    var filtered = incidents.filter(function(i) {
-      if (activeDirOfficeTab !== 'all' && i.office !== activeDirOfficeTab) return false;
-      if (tyF && i.incType !== tyF) return false;
-      if (caF && i.causeType !== caF) return false;
-      if (cmtF === 'none' && i.comment) return false;
-      if (cmtF === 'done' && !i.comment) return false;
-      return true;
-    });
-    var el = document.getElementById('dir-list');
-    if (!filtered.length) { el.innerHTML='<div class="empty"><p>該当するインシデントはありません</p></div>'; return; }
-    el.innerHTML = filtered.map(function(i) {
-      return '<div class="dc">'
-        +'<div class="dch"><div class="dct">'+(i.incidentDate||'')+' '+(i.incidentTime||'')+' ／ '+(i.patientName?i.patientName+' ／ ':'')+( i.location||'')+'</div>'
-        +'<div class="dcm">'
-        +(activeDirOfficeTab==='all'?'<span class="badge bo">'+(OFFICE_SHORT[i.office]||i.office||'')+'</span>':'')
-        +(i.incType?'<span class="badge bt">'+i.incType+'</span>':'')
-        +(i.causeType?'<span class="badge bc">'+i.causeType+'</span>':'')
-        +'</div></div>'
-        +'<div class="dcs"><span>報告者：'+(i.reporter||'-')+'</span><span>記入日：'+(i.reportDate||'-')+'</span></div>'
-        +'<div class="dctxt">'+(i.situation||'')+'</div>'
-        +'<div class="dca"><div class="dcal">🖊️ 所長コメント</div>'
-        +(i.comment?'<div class="dcae">'+i.comment+'</div>':'')
-        +'<textarea class="dcai" id="cmt-'+i.id+'" placeholder="コメントを入力…">'+(i.comment||'')+'</textarea>'
-        +'<button class="bcmt" data-cmt="'+i.id+'">保存</button>'
-        +'</div></div>';
-    }).join('');
-  }
 
   function saveComment(id) {
     var el = document.getElementById('cmt-'+id);
@@ -1273,8 +1202,6 @@ function doGet(e){ return doPost(e); }</div>
       fetch(gasUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'comment',id:id,comment:cmt})}).catch(function(){});
     }
     showToast('💬 コメントを保存しました');
-    renderDirList();
-    buildDirOfficeTabs();
   }
 
   // ===== GAS =====
