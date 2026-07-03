@@ -707,6 +707,25 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({ok:true}))
         .setMimeType(ContentService.MimeType.JSON);
     }
+    if (data.action === "update") {
+      const inc = data.incident;
+      const vals = sheet.getDataRange().getValues();
+      for (let i = 1; i < vals.length; i++) {
+        if (String(vals[i][0]) === String(inc.id)) {
+          sheet.getRange(i+1,3).setValue(inc.incidentDate||'');
+          sheet.getRange(i+1,4).setValue(inc.incidentTime||'');
+          sheet.getRange(i+1,7).setValue(inc.patientName||'');
+          sheet.getRange(i+1,8).setValue(inc.location||'');
+          sheet.getRange(i+1,9).setValue(inc.incType||'');
+          sheet.getRange(i+1,10).setValue(inc.causeType||'');
+          sheet.getRange(i+1,11).setValue(inc.situation||'');
+          sheet.getRange(i+1,12).setValue(inc.prevention||'');
+          break;
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ok:true}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
     return ContentService.createTextOutput(JSON.stringify({ok:true}))
       .setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
@@ -727,8 +746,54 @@ function doGet(e){ return doPost(e); }</div>
 
 <div class="mo" id="modal">
   <div class="mw">
-    <div class="mh"><h2>インシデント詳細</h2><div style="display:flex;align-items:center;gap:8px"><button class="btn-print" id="btn-print"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>印刷</button><button id="btn-delete" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>削除</button><button class="mx" id="btn-close-modal">✕</button></div></div>
+    <div class="mh"><h2 id="modal-title">インシデント詳細</h2><div style="display:flex;align-items:center;gap:8px"><button class="btn-print" id="btn-print"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>印刷</button><button id="btn-edit" style="background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>編集</button><button id="btn-delete" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>削除</button><button class="mx" id="btn-close-modal">✕</button></div></div>
     <div class="mb" id="modal-body"></div>
+    <div id="modal-edit-form" style="display:none;padding:18px 22px;border-top:1px solid var(--c100)">
+      <div style="font-size:12px;font-weight:700;color:#2563eb;margin-bottom:14px;display:flex;align-items:center;gap:6px">
+        ✏️ 編集モード
+        <span style="font-size:11px;font-weight:400;color:var(--c600)">変更したい項目だけ編集できます</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--c600);margin-bottom:4px">発生日</label>
+          <input type="date" id="edit-incident-date" style="width:100%;padding:8px 11px;border:1px solid var(--c200);border-radius:7px;font-size:14px;font-family:inherit">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--c600);margin-bottom:4px">発生時刻</label>
+          <input type="time" id="edit-incident-time" style="width:100%;padding:8px 11px;border:1px solid var(--c200);border-radius:7px;font-size:14px;font-family:inherit">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--c600);margin-bottom:4px">利用者様氏名</label>
+          <input type="text" id="edit-patient-name" style="width:100%;padding:8px 11px;border:1px solid var(--c200);border-radius:7px;font-size:14px;font-family:inherit" placeholder="例：山田様">
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--c600);margin-bottom:4px">発生場所</label>
+          <input type="text" id="edit-location" style="width:100%;padding:8px 11px;border:1px solid var(--c200);border-radius:7px;font-size:14px;font-family:inherit" placeholder="例：自宅・居室">
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--c600);margin-bottom:4px">発生分類</label>
+        <div id="edit-inctype-pills" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--c600);margin-bottom:4px">原因分類</label>
+        <div id="edit-causetype-pills" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--c600);margin-bottom:4px">発生状況と対応（家族への連絡含む）</label>
+        <textarea id="edit-situation" style="width:100%;padding:8px 11px;border:1px solid var(--c200);border-radius:7px;font-size:14px;font-family:inherit;resize:vertical;min-height:80px"></textarea>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--c600);margin-bottom:4px">原因と予防策</label>
+        <textarea id="edit-prevention" style="width:100%;padding:8px 11px;border:1px solid var(--c200);border-radius:7px;font-size:14px;font-family:inherit;resize:vertical;min-height:80px"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="btn-edit-cancel" style="padding:9px 18px;border:1px solid var(--c200);background:#fff;border-radius:7px;font-size:13px;font-family:inherit;cursor:pointer">キャンセル</button>
+        <button id="btn-edit-save" style="padding:9px 22px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">変更を保存</button>
+      </div>
+    </div>
     <div id="modal-comment"></div>
     <div id="modal-cmt-form" style="padding:14px 22px 18px;border-top:1px solid #f3f4f6;background:#fef3c7;">
       <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:10px">🏷️ 所長確認・コメント</div>
@@ -863,6 +928,9 @@ function doGet(e){ return doPost(e); }</div>
     document.getElementById('btn-close-modal').addEventListener('click', closeModal);
     document.getElementById('btn-print').addEventListener('click', printIncident);
     document.getElementById('btn-delete').addEventListener('click', deleteIncident);
+    document.getElementById('btn-edit').addEventListener('click', openEditMode);
+    document.getElementById('btn-edit-cancel').addEventListener('click', closeEditMode);
+    document.getElementById('btn-edit-save').addEventListener('click', saveEdit);
     document.getElementById('btn-save-comment').addEventListener('click', saveModalComment);
 
     // モーダル背景
@@ -1715,6 +1783,114 @@ function doGet(e){ return doPost(e); }</div>
     window.print();
     document.body.classList.remove('printing-stats');
     area.style.display='none';
+  }
+
+
+  // ===== 編集 =====
+  var INC_TYPES = ['内服','注射','処置','急変時の対応','日常生活の世話','転倒転落','器物破損','接遇','事務','勤務','その他'];
+  var CAUSE_TYPES = ['観察不足','判断遅れ','技量不足','連絡不足','説明不足','思い込み','確認不足','知識不足','経験不足','管理ミス','指示ミス','危機察知','その他'];
+
+  function openEditMode() {
+    var i = currentIncident;
+    if (!i) return;
+    // 詳細表示を隠して編集フォームを表示
+    document.getElementById('modal-body').style.display = 'none';
+    document.getElementById('modal-cmt-form').style.display = 'none';
+    document.getElementById('modal-edit-form').style.display = 'block';
+    document.getElementById('modal-title').textContent = 'インシデント編集';
+    document.getElementById('btn-print').style.display = 'none';
+    document.getElementById('btn-edit').style.display = 'none';
+    document.getElementById('btn-delete').style.display = 'none';
+
+    // フォームに現在の値をセット
+    document.getElementById('edit-incident-date').value = i.incidentDate || '';
+    document.getElementById('edit-incident-time').value = i.incidentTime || '';
+    document.getElementById('edit-patient-name').value = i.patientName || '';
+    document.getElementById('edit-location').value = i.location || '';
+    document.getElementById('edit-situation').value = i.situation || '';
+    document.getElementById('edit-prevention').value = i.prevention || '';
+
+    // 発生分類ピル
+    var itEl = document.getElementById('edit-inctype-pills');
+    itEl.innerHTML = INC_TYPES.map(function(t) {
+      var sel = i.incType === t;
+      return '<button type="button" data-inctype="'+t+'" style="padding:5px 13px;border-radius:20px;font-size:13px;font-family:inherit;cursor:pointer;border:'+(sel?'none':'1px solid #e5e7eb')+';background:'+(sel?'#1a6b4a':'#fff')+';color:'+(sel?'#fff':'#374151')+';font-weight:'+(sel?'700':'400')+'">'+t+'</button>';
+    }).join('');
+    itEl.querySelectorAll('button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        itEl.querySelectorAll('button').forEach(function(b) {
+          b.style.background='#fff'; b.style.color='#374151'; b.style.border='1px solid #e5e7eb'; b.style.fontWeight='400';
+        });
+        btn.style.background='#1a6b4a'; btn.style.color='#fff'; btn.style.border='none'; btn.style.fontWeight='700';
+      });
+    });
+
+    // 原因分類ピル
+    var ctEl = document.getElementById('edit-causetype-pills');
+    ctEl.innerHTML = CAUSE_TYPES.map(function(t) {
+      var sel = i.causeType === t;
+      return '<button type="button" data-causetype="'+t+'" style="padding:5px 13px;border-radius:20px;font-size:13px;font-family:inherit;cursor:pointer;border:'+(sel?'none':'1px solid #e5e7eb')+';background:'+(sel?'#1a6b4a':'#fff')+';color:'+(sel?'#fff':'#374151')+';font-weight:'+(sel?'700':'400')+'">'+t+'</button>';
+    }).join('');
+    ctEl.querySelectorAll('button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        ctEl.querySelectorAll('button').forEach(function(b) {
+          b.style.background='#fff'; b.style.color='#374151'; b.style.border='1px solid #e5e7eb'; b.style.fontWeight='400';
+        });
+        btn.style.background='#1a6b4a'; btn.style.color='#fff'; btn.style.border='none'; btn.style.fontWeight='700';
+      });
+    });
+  }
+
+  function closeEditMode() {
+    document.getElementById('modal-body').style.display = '';
+    document.getElementById('modal-cmt-form').style.display = '';
+    document.getElementById('modal-edit-form').style.display = 'none';
+    document.getElementById('modal-title').textContent = 'インシデント詳細';
+    document.getElementById('btn-print').style.display = '';
+    document.getElementById('btn-edit').style.display = '';
+    document.getElementById('btn-delete').style.display = '';
+  }
+
+  function saveEdit() {
+    var i = currentIncident;
+    if (!i) return;
+    var idx = -1;
+    incidents.forEach(function(x,n){ if(x.id===i.id) idx=n; });
+    if (idx===-1) return;
+
+    // 選択中の発生分類・原因分類を取得
+    var selIncType = '';
+    document.getElementById('edit-inctype-pills').querySelectorAll('button').forEach(function(b) {
+      if (b.style.background==='rgb(26, 107, 74)' || b.style.fontWeight==='700') selIncType = b.getAttribute('data-inctype');
+    });
+    var selCauseType = '';
+    document.getElementById('edit-causetype-pills').querySelectorAll('button').forEach(function(b) {
+      if (b.style.background==='rgb(26, 107, 74)' || b.style.fontWeight==='700') selCauseType = b.getAttribute('data-causetype');
+    });
+
+    incidents[idx].incidentDate  = document.getElementById('edit-incident-date').value || i.incidentDate;
+    incidents[idx].incidentTime  = document.getElementById('edit-incident-time').value || i.incidentTime;
+    incidents[idx].patientName   = document.getElementById('edit-patient-name').value.trim() || i.patientName;
+    incidents[idx].location      = document.getElementById('edit-location').value.trim() || i.location;
+    incidents[idx].situation     = document.getElementById('edit-situation').value.trim() || i.situation;
+    incidents[idx].prevention    = document.getElementById('edit-prevention').value.trim() || i.prevention;
+    if (selIncType)   incidents[idx].incType   = selIncType;
+    if (selCauseType) incidents[idx].causeType = selCauseType;
+
+    currentIncident = incidents[idx];
+    lsSet('cosmosu_inc', JSON.stringify(incidents));
+
+    // GASに更新送信
+    if (gasUrl) {
+      var url = gasUrl + '?data=' + encodeURIComponent(JSON.stringify({action:'update', incident:incidents[idx]}));
+      fetch(url).catch(function(){});
+    }
+
+    showToast('✅ 編集を保存しました');
+    closeEditMode();
+    // 詳細表示を更新
+    openModal(i.id);
+    buildOfficeTabs(); updateStats(); renderList();
   }
 
   // ===== トースト =====
