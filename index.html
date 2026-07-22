@@ -1603,6 +1603,31 @@ function doGet(e){ return doPost(e); }</div>
       +'<div>所長確認済：<span>'+target.filter(function(i){return i.checked;}).length+'件</span></div>'
       
       +'</div>'
+      + (function(){
+          // 事業所ごとの発生分類集計表
+          var html = '<div style="margin-bottom:18px;break-inside:avoid">'
+            +'<div style="font-size:10pt;font-weight:700;color:#fff;background:#1a6b4a;padding:4px 10px;border-radius:3px;margin-bottom:8px">事業所別　発生分類集計</div>'
+            +'<table style="width:100%;border-collapse:collapse;font-size:9pt">'
+            +'<thead><tr>'
+            +'<th style="background:#e8f5ee;color:#1a6b4a;padding:4px 8px;border:1px solid #b7dfc9;text-align:left">事業所</th>'
+            +'<th style="background:#e8f5ee;color:#1a6b4a;padding:4px 8px;border:1px solid #b7dfc9;text-align:center;width:40px">合計</th>'
+            +'<th style="background:#e8f5ee;color:#1a6b4a;padding:4px 8px;border:1px solid #b7dfc9;text-align:left">発生分類（件数）</th>'
+            +'</tr></thead><tbody>';
+          order.forEach(function(office, idx) {
+            var rows = grouped[office];
+            var cnt = {};
+            rows.forEach(function(i){ if(i.incType) cnt[i.incType]=(cnt[i.incType]||0)+1; });
+            var sorted = Object.entries(cnt).sort(function(a,b){return b[1]-a[1];});
+            var detail = sorted.map(function(r){ return r[0]+'：'+r[1]+'件'; }).join('　');
+            html += '<tr style="'+(idx%2?'background:#f9fafb':'')+'">'
+              +'<td style="padding:5px 8px;border:1px solid #d1d5db;font-weight:700;white-space:nowrap">'+(OFFICE_SHORT[office]||office)+'</td>'
+              +'<td style="padding:5px 8px;border:1px solid #d1d5db;text-align:center;font-weight:700;color:#1a6b4a">'+rows.length+'件</td>'
+              +'<td style="padding:5px 8px;border:1px solid #d1d5db;font-size:8.5pt;color:#374151">'+detail+'</td>'
+              +'</tr>';
+          });
+          html += '</tbody></table></div>';
+          return html;
+        })()
       + sectionsHtml
       +'<div class="mp-footer">（株）こすもす　インシデント報告システム　出力：'+now+'</div>';
 
