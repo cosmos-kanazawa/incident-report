@@ -139,6 +139,116 @@ textarea{resize:vertical;min-height:90px}
   .otab{padding:8px 11px;font-size:12px}
 }
 
+/* ===== 報告入力画面 スマホ対応 (v36) ===== */
+#page-report input[type=text],
+#page-report input[type=date],
+#page-report input[type=time] {
+  font-size:16px;
+  padding:11px 13px;
+  border-radius:8px;
+}
+#page-report textarea {
+  font-size:16px;
+  padding:11px 13px;
+  resize:none;
+  /* JS自動拡張が動作しない場合のフォールバック: overflow-y:autoでスクロール確認可能 */
+  overflow-y:auto;
+  min-height:100px;
+  max-height:480px; /* フォールバック時の最大高さ */
+  border-radius:8px;
+}
+/* ラジオ pills — タッチターゲット44px+、チェックマーク付き */
+#page-report .pills {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:4px;
+}
+#page-report .pills input[type=radio] {
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+#page-report .pills label {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-height:44px;
+  padding:8px 16px;
+  border:2px solid var(--c200);
+  border-radius:22px;
+  font-size:14px;
+  color:var(--c700);
+  cursor:pointer;
+  transition:all .12s;
+  user-select:none;
+  line-height:1.4;
+}
+#page-report .pills label::before {
+  content:'';
+  display:inline-block;
+  width:16px;
+  height:16px;
+  min-width:16px;
+  border-radius:50%;
+  border:2px solid var(--c200);
+  background:#fff;
+  transition:all .12s;
+  flex-shrink:0;
+}
+#page-report .pills label:hover {
+  border-color:var(--gm);
+  background:var(--gl);
+  color:var(--g);
+}
+#page-report .pills label:hover::before {
+  border-color:var(--gm);
+}
+#page-report .pills input[type=radio]:checked + label {
+  background:var(--gl);
+  border-color:var(--g);
+  color:var(--g);
+  font-weight:700;
+}
+#page-report .pills input[type=radio]:checked + label::before {
+  background:var(--g);
+  border-color:var(--g);
+  box-shadow:inset 0 0 0 3px #fff;
+}
+/* フッターボタン: リセットを左、送信を右に分離 */
+#page-report .ff {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:nowrap;
+}
+/* エラーメッセージ表示エリア — #page-report 内に限定 */
+#page-report .field-error {
+  font-size:13px;
+  color:var(--red);
+  margin-top:5px;
+  padding:4px 0;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  animation:rpt-fadeInErr .2s ease;
+}
+/* アニメーション名は rpt- プレフィックスで既存名と衝突を回避 */
+@keyframes rpt-fadeInErr {
+  from{opacity:0;transform:translateY(-4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+/* スマホ専用追加調整 */
+@media(max-width:480px) {
+  #page-report .fs { padding:16px 15px; }
+  #page-report .ff { padding:16px 15px; }
+  #page-report .bsub { padding:13px 20px; font-size:15px; }
+  #page-report .brst { padding:12px 16px; font-size:14px; }
+  #page-report .pills { gap:7px; }
+  #page-report .pills label { font-size:13px; padding:7px 13px; min-height:44px; }
+}
+
 /* ===== 印刷スタイル ===== */
 @media print {
   header, nav, .ph, .sb, .otabs, .fb, .toast, .mo { display:none!important; }
@@ -493,7 +603,7 @@ body.printing-monthly #print-area { display:none!important; }
       </div>
     </div>
     <div class="ff">
-      <button class="brst" id="btn-reset">リセット</button>
+      <button class="brst" id="btn-reset">入力内容を消去</button>
       <button class="bsub" id="btn-submit">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         報告を送信
@@ -912,7 +1022,25 @@ function doGet(e){ return doPost(e); }</div>
 
     // フォームボタン
     document.getElementById('btn-submit').addEventListener('click', submitReport);
-    document.getElementById('btn-reset').addEventListener('click', resetForm);
+    document.getElementById('btn-reset').addEventListener('click', function(){ resetForm(false); });
+
+    // textarea 自動拡張 (v36)
+    // フォールバック: CSS overflow-y:auto + max-height:480px（JS無効時にスクロール可能）
+    // JS動作時: max-height を解除して無制限に拡張。高さ計測中のみ overflow-y:hidden にして
+    //            スクロール幅を除いた正確な scrollHeight を取得し、直後に auto へ戻す。
+    ['f_situation','f_prevention'].forEach(function(id) {
+      var ta = document.getElementById(id);
+      if (!ta) return;
+      // JS起動時に max-height 制限を解除（CSSフォールバックは JS 無効時専用）
+      ta.style.maxHeight = 'none';
+      function autoGrow() {
+        ta.style.overflowY = 'hidden'; // 計測中のみ hidden
+        ta.style.height = 'auto';
+        ta.style.height = (ta.scrollHeight + 2) + 'px';
+        ta.style.overflowY = 'auto';  // 計測後すぐ auto に戻す（スクロール可能を維持）
+      }
+      ta.addEventListener('input', autoGrow);
+    });
     document.getElementById('btn-load-gas').addEventListener('click', loadFromGAS);
     document.getElementById('btn-monthly-print').addEventListener('click', printMonthly);
     document.getElementById('btn-dir-logout').addEventListener('click', dirLogout);
@@ -1000,7 +1128,33 @@ function doGet(e){ return doPost(e); }</div>
     return el ? el.value : '';
   }
 
+  // フィールドエラー表示ヘルパー (v36)
+  function clearFieldErrors() {
+    document.querySelectorAll('#page-report .field-error').forEach(function(el){ el.remove(); });
+    document.querySelectorAll('#page-report .pills-error').forEach(function(el){ el.classList.remove('pills-error'); });
+    document.querySelectorAll('#page-report input.input-error,#page-report textarea.input-error').forEach(function(el){ el.classList.remove('input-error'); });
+  }
+  function showFieldError(targetEl, msg) {
+    var existing = targetEl.parentNode.querySelector('.field-error');
+    if (existing) existing.remove();
+    var err = document.createElement('div');
+    err.className = 'field-error';
+    err.innerHTML = '⚠️ ' + msg;
+    targetEl.parentNode.appendChild(err);
+    // スクロールは submitReport 末尾で一括して最初のエラーへ行う
+  }
+  function showPillsError(pillsEl, msg) {
+    var existing = pillsEl.parentNode.querySelector('.field-error');
+    if (existing) existing.remove();
+    var err = document.createElement('div');
+    err.className = 'field-error';
+    err.innerHTML = '⚠️ ' + msg;
+    pillsEl.parentNode.appendChild(err);
+    // スクロールは submitReport 末尾で一括して最初のエラーへ行う
+  }
+
   function submitReport() {
+    clearFieldErrors();
     var office = gr('office');
     var reporter = document.getElementById('f_reporter').value.trim();
     var reportDate = document.getElementById('f_report_date').value;
@@ -1009,13 +1163,47 @@ function doGet(e){ return doPost(e); }</div>
     var causeType = gr('cause_type');
     var situation = document.getElementById('f_situation').value.trim();
     var prevention = document.getElementById('f_prevention').value.trim();
-    if (!office)       { showToast('⚠️ 所属事業所を選択してください','#d97706'); return; }
-    if (!reporter)     { showToast('⚠️ 報告者名を入力してください','#d97706'); return; }
-    if (!reportDate||!incidentDate) { showToast('⚠️ 記入日・発生日を入力してください','#d97706'); return; }
-    if (!incType)      { showToast('⚠️ 発生分類を選択してください','#d97706'); return; }
-    if (!causeType)    { showToast('⚠️ 原因分類を選択してください','#d97706'); return; }
-    if (!situation)    { showToast('⚠️ 発生状況と対応を入力してください','#d97706'); return; }
-    if (!prevention)   { showToast('⚠️ 原因と予防策を入力してください','#d97706'); return; }
+    var hasError = false;
+    if (!office) {
+      showPillsError(document.querySelector('#page-report .pills'), '所属事業所を選択してください');
+      hasError = true;
+    }
+    if (!reporter) {
+      showFieldError(document.getElementById('f_reporter'), '報告者名を入力してください');
+      hasError = true;
+    }
+    if (!reportDate) {
+      showFieldError(document.getElementById('f_report_date'), '記入日を入力してください');
+      hasError = true;
+    }
+    if (!incidentDate) {
+      showFieldError(document.getElementById('f_incident_date'), '発生日を入力してください');
+      hasError = true;
+    }
+    if (!incType) {
+      var incPills = document.querySelector('#page-report input[name=inc_type]').closest('.pills');
+      showPillsError(incPills, '発生分類を選択してください');
+      hasError = true;
+    }
+    if (!causeType) {
+      var causePills = document.querySelector('#page-report input[name=cause_type]').closest('.pills');
+      showPillsError(causePills, '原因分類を選択してください');
+      hasError = true;
+    }
+    if (!situation) {
+      showFieldError(document.getElementById('f_situation'), '発生状況と対応を入力してください');
+      hasError = true;
+    }
+    if (!prevention) {
+      showFieldError(document.getElementById('f_prevention'), '原因と予防策を入力してください');
+      hasError = true;
+    }
+    if (hasError) {
+      // 最初のエラー箇所へスクロール
+      var firstErr = document.querySelector('#page-report .field-error');
+      if (firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
     var d = {
       id: Date.now(), reportDate: reportDate, reporter: reporter, office: office,
       incidentDate: incidentDate,
@@ -1031,13 +1219,19 @@ function doGet(e){ return doPost(e); }</div>
     if (gasUrl) {
       fetch(gasUrl, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:'submit'},d))}).catch(function(){});
     }
+    clearFieldErrors();
     showToast('✅ 報告を送信しました');
-    resetForm();
+    resetForm(true); // 送信後は確認不要
     // 送信後GASから最新データを再取得して同期
     if (gasUrl) { setTimeout(autoFetchFromGAS, 1500); }
   }
 
-  function resetForm() {
+  function resetForm(skipConfirm) {
+    // 確認ダイアログ (送信後の自動クリアはskipConfirm=true)
+    if (!skipConfirm) {
+      if (!confirm('入力中の内容をすべて消去しますか？\n（送信前のデータは失われます）')) return;
+    }
+    clearFieldErrors();
     var t = new Date().toISOString().split('T')[0];
     document.querySelectorAll('input[name=office]').forEach(function(r){r.checked=false;});
     document.getElementById('f_reporter').value='';
@@ -1050,6 +1244,11 @@ function doGet(e){ return doPost(e); }</div>
     document.querySelectorAll('input[name=cause_type]').forEach(function(r){r.checked=false;});
     document.getElementById('f_situation').value='';
     document.getElementById('f_prevention').value='';
+    // textareaの高さをリセット
+    ['f_situation','f_prevention'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) { el.style.height=''; }
+    });
   }
 
   // ===== 統計 =====
